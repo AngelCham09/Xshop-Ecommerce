@@ -47,8 +47,6 @@
                         <button
                             type="button"
                             @click="openProductModal(true)"
-                            data-modal-target="crud-modal"
-                            data-modal-toggle="crud-modal"
                             class="flex items-center justify-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
                         >
                             <svg
@@ -320,8 +318,6 @@
                                             <li>
                                                 <button
                                                     @click="openProductModal()"
-                                                    data-modal-target="crud-modal"
-                                                    data-modal-toggle="crud-modal"
                                                     class="block w py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                                 >
                                                     Edit
@@ -445,14 +441,16 @@
     </section>
 
     <!--Add product modal-->
-    <template> </template>
     <div
-        id="crud-modal"
+        v-show="productModal"
         tabindex="-1"
         aria-hidden="true"
-        class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+        class="fixed inset-0 z-50 flex justify-center items-center w-full h-full bg-gray-900 bg-opacity-50"
     >
-        <div class="relative p-4 w-full max-w-md max-h-full">
+        <!-- Background overlay -->
+        <div class="fixed inset-0 bg-gray-900 bg-opacity-50"></div>
+
+        <div class="relative p-4 w-full max-w-md max-h-full z-10">
             <!-- Modal content -->
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                 <!-- Modal header -->
@@ -462,12 +460,12 @@
                     <h3
                         class="text-lg font-semibold text-gray-900 dark:text-white"
                     >
-                        {{ isEdit ? "Edit Product" : "Add Product" }}
+                        {{ isEdit ? "Edit Product" : "Create new product" }}
                     </h3>
                     <button
+                        @click="() => {productModal = false}"
                         type="button"
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                        data-modal-toggle="crud-modal"
                     >
                         <svg
                             class="w-3 h-3"
@@ -488,7 +486,7 @@
                     </button>
                 </div>
                 <!-- Modal body -->
-                <form class="p-4 md:p-5">
+                <form class="p-4 md:p-5" @submit.prevent="submitProduct">
                     <div class="grid gap-4 mb-4 grid-cols-2">
                         <div class="col-span-2">
                             <label
@@ -497,6 +495,7 @@
                                 >Name</label
                             >
                             <input
+                                v-model="productData.title"
                                 type="text"
                                 name="name"
                                 id="name"
@@ -512,8 +511,11 @@
                                 >Price</label
                             >
                             <input
+                                v-model="productData.price"
                                 type="number"
                                 name="price"
+                                step="0.01"
+                                min="0.00"
                                 id="price"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 placeholder="$2999"
@@ -522,19 +524,59 @@
                         </div>
                         <div class="col-span-2 sm:col-span-1">
                             <label
+                                for="qty"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                >Quantity</label
+                            >
+                            <input
+                                v-model="productData.quantity"
+                                type="number"
+                                name="qty"
+                                id="qty"
+                                min="1"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                placeholder="$2999"
+                                required=""
+                            />
+                        </div>
+                        <div class="col-span-2 sm:col-span-1">
+                            <label
+                                for="brand"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                >Brand</label
+                            >
+                            <select
+                                v-model="productData.brand_id"
+                                id="brand"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                            >
+                                <option
+                                    v-for="brand in brands"
+                                    :key="brand.id"
+                                    :value="brand.id"
+                                >
+                                    {{ brand.name }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-span-2 sm:col-span-1">
+                            <label
                                 for="category"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Category</label
                             >
                             <select
+                                v-model="productData.category_id"
                                 id="category"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             >
-                                <option selected="">Select category</option>
-                                <option value="TV">TV/Monitors</option>
-                                <option value="PC">PC</option>
-                                <option value="GA">Gaming/Console</option>
-                                <option value="PH">Phones</option>
+                                <option
+                                    v-for="category in categories"
+                                    :key="category.id"
+                                    :value="category.id"
+                                >
+                                    {{ category.name }}
+                                </option>
                             </select>
                         </div>
                         <div class="col-span-2">
@@ -544,6 +586,7 @@
                                 >Product Description</label
                             >
                             <textarea
+                                v-model="productData.description"
                                 id="description"
                                 rows="4"
                                 class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -555,19 +598,7 @@
                         type="submit"
                         class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                     >
-                        <svg
-                            class="me-1 -ms-1 w-5 h-5"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                fill-rule="evenodd"
-                                d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                                clip-rule="evenodd"
-                            ></path>
-                        </svg>
-                        Add new product
+                        Submit
                     </button>
                 </form>
             </div>
@@ -575,15 +606,17 @@
     </div>
 </template>
 <script setup>
-import { usePage } from "@inertiajs/vue3";
+import { usePage, useForm } from "@inertiajs/vue3";
 import { ref, onMounted } from "vue";
 import { router } from "@inertiajs/vue3";
-import { useToast } from '@/components/ui/toast/use-toast'
 
-const { toast } = useToast()
 const products = usePage().props.products;
+const brands = usePage().props.brands;
+const categories = usePage().props.categories;
 const isEdit = ref(false);
-const productData = ref({
+const productModal = ref(false);
+
+const productData = useForm({
     id: "",
     title: "",
     price: 0,
@@ -599,47 +632,55 @@ const productData = ref({
 const productImages = ref([]);
 
 const submitProduct = async () => {
-    const formData = new FormData();
+    // const formData = new FormData();
 
-    // Append the non-array properties from productData
-    for (const [key, value] of Object.entries(productData.value)) {
-        // Skip the product_images array (we'll handle it separately)
-        if (key !== 'product_images') {
-            formData.append(key, value);
-        }
-    }
+    // // Append the non-array properties from productData
+    // for (const [key, value] of Object.entries(productData.value)) {
+    //     // Skip the product_images array (we'll handle it separately)
+    //     if (key !== "product_images") {
+    //         formData.append(key, value);
+    //     }
+    // }
 
-    // Append product_images separately as an array of raw image files
-    for (const image of productImages.value) {
-        formData.append('product_images[]', image.raw);
-    }
-
+    // // Append product_images separately as an array of raw image files
+    // for (const image of productImages.value) {
+    //     formData.append("product_images[]", image.raw);
+    // }
 
     try {
-        await router.post("products/store", formData, {
-            onSuccess: () => {
-                console.error("Form submission success:", errors);
+        await router.post("products/store", productData, {
+            onSuccess: (page) => {
+                Swal.fire({
+                    toast: true,
+                    icon: "success",
+                    position: "top-end",
+                    showConfirmButton: false,
+                    title: page.props.flash.success,
+                });
             },
             onError: (errors) => {
-                console.error("Form submission failed:", errors);
+                Swal.fire({
+                    toast: true,
+                    icon: "error",
+                    position: "top-end",
+                    showConfirmButton: false,
+                    title: errors,
+                });
             },
         });
     } catch (error) {
         console.error("Error submitting the form:", error);
     }
+
+    productModal.value = false;
 };
 
 const openProductModal = (create = false) => {
+    productModal.value = true;
     if (!create) {
         isEdit.value = true;
     }
-};
 
-onMounted(() => {
-  // You can trigger the toast here
-   toast({
-        title: 'Scheduled: Catch up',
-        description: 'Friday, February 10, 2023 at 5:57 PM',
-      });
-});
+
+};
 </script>
