@@ -16,7 +16,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::get();
+        $products = Product::with(['brand', 'category', 'product_images'])->get();
         $brands = Brand::get();
         $categories = Category::get();
 
@@ -29,6 +29,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+
         $attributes = request()->validate([
             'title' => ['required'],
             'price' => ['required'],
@@ -36,7 +37,7 @@ class ProductController extends Controller
             'description' => ['nullable'],
             'category_id' => ['required'],
             'brand_id' => ['required'],
-            'product_images' => ['nullable', File::types(['png', 'jpg', 'webp'])],
+            'product_images.*' => ['nullable', File::types(['png', 'jpg', 'webp'])],
         ]);
 
         $product = Product::create(
@@ -48,8 +49,10 @@ class ProductController extends Controller
 
             $productImages = $request->file('product_images');
             foreach ($productImages as $image) {
+
                 $imageName = time() . '-' . Str::random(10) . '.' . $image->getClientOriginalExtension();
-                $image->save('product_images', $imageName);
+                // Store the image in the 'product_images' directory in the 'public' disk
+                $image->storeAs('product_images', $imageName, 'public');
 
                 ProductImage::create([
                     'product_id' => $product->id,
@@ -60,5 +63,12 @@ class ProductController extends Controller
 
         return redirect()->route('admin.products.index')->with('success', 'Product created successfully');
 
+    }
+
+    public function deleteImage($id)
+    {
+        $image = ProductImage::where('id', $id)->delete();
+
+        return redirect()->route('admin.products.index')->with('success', 'Image deleted successfully');
     }
 }

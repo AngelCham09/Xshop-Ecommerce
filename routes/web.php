@@ -48,6 +48,7 @@ Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->group(func
     Route::
     get('/products', [ProductController::class, 'index'])->name('admin.products.index');
     Route::post('/products/store', [ProductController::class, 'store'])->name('admin.products.store');
+    Route::delete('/products/image/{id}', [ProductController::class, 'deleteImage'])->name('admin.products.image.delete');
 });
 
 

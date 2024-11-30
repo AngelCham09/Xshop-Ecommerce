@@ -22,6 +22,7 @@
     "dependencies": {
         "class-variance-authority": "^0.7.0",
         "clsx": "^2.1.1",
+        "element-plus": "^2.9.0",
         "flowbite": "^2.5.2",
         "lucide-vue-next": "^0.456.0",
         "radix-vue": "^1.9.9",
