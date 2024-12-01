@@ -35,8 +35,8 @@ class ProductController extends Controller
             'price' => ['required'],
             'quantity' => ['required'],
             'description' => ['nullable'],
-            'category_id' => ['required'],
-            'brand_id' => ['required'],
+            'category_id' => ['nullable'],
+            'brand_id' => ['nullable'],
             'product_images.*' => ['nullable', File::types(['png', 'jpg', 'webp'])],
         ]);
 
@@ -70,5 +70,47 @@ class ProductController extends Controller
         $image = ProductImage::where('id', $id)->delete();
 
         return redirect()->route('admin.products.index')->with('success', 'Image deleted successfully');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $product = Product::findOrFail($id);
+
+        $attributes = request()->validate([
+            'title' => ['required'],
+            'price' => ['required'],
+            'quantity' => ['required'],
+            'description' => ['nullable'],
+            'category_id' => ['nullable'],
+            'brand_id' => ['nullable'],
+            'product_images.*' => ['nullable', File::types(['png', 'jpg', 'webp'])],
+        ]);
+
+        if ($request->has('product_images')) {
+
+            $productImages = $request->file('product_images');
+            foreach ($productImages as $image) {
+
+                $imageName = time() . '-' . Str::random(10) . '.' . $image->getClientOriginalExtension();
+                // Store the image in the 'product_images' directory in the 'public' disk
+                $image->storeAs('product_images', $imageName, 'public');
+
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image' => 'product_images/' . $imageName,
+                ]);
+            }
+        }
+
+        $product->fill($attributes);
+        $product->save();
+        return redirect()->back()->with('success', 'Product updated successfully');
+
+    }
+
+    public function destroy($id)
+    {
+        $product = Product::findOrFail($id)->delete();
+        return redirect()->back()->with('success', 'Product deleted successfully');
     }
 }

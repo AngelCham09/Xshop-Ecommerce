@@ -242,9 +242,6 @@
                                 </th>
                                 <th scope="col" class="px-4 py-3">Category</th>
                                 <th scope="col" class="px-4 py-3">Brand</th>
-                                <th scope="col" class="px-4 py-3">
-                                    Description
-                                </th>
                                 <th scope="col" class="px-4 py-3">Price</th>
                                 <th scope="col" class="px-4 py-3">In Stock</th>
                                 <th scope="col" class="px-4 py-3">Publish</th>
@@ -270,9 +267,6 @@
                                 </td>
                                 <td class="px-4 py-3">
                                     {{ product.brand.name }}
-                                </td>
-                                <td class="px-4 py-3">
-                                    {{ product.description }}
                                 </td>
                                 <td class="px-4 py-3">{{ product.price }}</td>
                                 <td class="px-4 py-3">
@@ -339,27 +333,26 @@
                                             <li>
                                                 <a
                                                     href="#"
-                                                    class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                                    >Show</a
-                                                >
-                                            </li>
-                                            <li>
-                                                <button
                                                     @click="
                                                         openProductModal(
                                                             false,
                                                             product
                                                         )
                                                     "
-                                                    class="block w py-2 px-4 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                    class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                                                    >Edit</a
                                                 >
-                                                    Edit
-                                                </button>
                                             </li>
                                         </ul>
                                         <div class="py-1">
                                             <a
                                                 href="#"
+                                                @click="
+                                                    deleteProduct(
+                                                        product,
+                                                        index
+                                                    )
+                                                "
                                                 class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                                                 >Delete</a
                                             >
@@ -528,7 +521,11 @@
 
                 <!-- Modal body -->
                 <div class="p-4 md:p-5 overflow-y-auto flex-grow">
-                    <form @submit.prevent="submitProduct">
+                    <form
+                        @submit.prevent="
+                            isEdit ? updateProduct() : submitProduct()
+                        "
+                    >
                         <div class="grid gap-4 mb-4 grid-cols-2">
                             <div class="col-span-2">
                                 <label
@@ -718,7 +715,9 @@ import { ref, onMounted } from "vue";
 import { router } from "@inertiajs/vue3";
 import { Plus } from "@element-plus/icons-vue";
 
-const products = usePage().props.products;
+defineProps({
+    products: Array,
+});
 const brands = usePage().props.brands;
 const categories = usePage().props.categories;
 const isEdit = ref(false);
@@ -782,6 +781,7 @@ const submitProduct = async () => {
                     showConfirmButton: false,
                     title: page.props.flash.success,
                 });
+                productModal.value = false;
             },
             onError: (errors) => {
                 Swal.fire({
@@ -796,13 +796,12 @@ const submitProduct = async () => {
     } catch (error) {
         console.error("Error submitting the form:", error);
     }
-
-    resetData();
-    productModal.value = false;
 };
 
 const openProductModal = (create = false, product = null) => {
     productModal.value = true;
+    isEdit.value = false;
+    resetData();
     if (!create) {
         isEdit.value = true;
         productData.value = { ...product };
@@ -823,6 +822,7 @@ const resetData = () => {
         category_id: "",
     };
     dialogImageUrl.value = "";
+    productImages.value = [];
 };
 
 const deleteImage = async (pimage, index) => {
@@ -842,5 +842,69 @@ const deleteImage = async (pimage, index) => {
     } catch (err) {
         console.log(err);
     }
+};
+
+const updateProduct = async () => {
+    const formData = new FormData();
+
+    // Append the non-array properties from productData
+    for (const [key, value] of Object.entries(productData.value)) {
+        // Skip the product_images array (we'll handle it separately)
+        if (key !== "product_images") {
+            formData.append(key, value);
+        }
+    }
+
+    // Append product_images separately as an array of raw image files
+    for (const image of productImages.value) {
+        formData.append("product_images[]", image.raw);
+    }
+
+    try {
+        await router.post("products/update/" + productData.value.id, formData, {
+            onSuccess: (page) => {
+                Swal.fire({
+                    toast: true,
+                    icon: "success",
+                    position: "top-end",
+                    showConfirmButton: false,
+                    title: page.props.flash.success,
+                });
+                productModal.value = false;
+            },
+        });
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+const deleteProduct = (product, index) => {
+    Swal.fire({
+        title: "Are you sure ?",
+        text: "This action cannot be undo.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Confirm",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            try {
+                router.delete("products/destroy/" + product.id, {
+                    onSuccess: (page) => {
+                        Swal.fire({
+                            toast: true,
+                            icon: "success",
+                            position: "top-end",
+                            showConfirmButton: false,
+                            title: page.props.flash.success,
+                        });
+                    },
+                });
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    });
 };
 </script>

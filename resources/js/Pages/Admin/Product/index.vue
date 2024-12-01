@@ -1,6 +1,6 @@
 <template>
     <AdminLayout>
-        <ProductList/>
+        <ProductList :products="products"></ProductList>
     </AdminLayout>
 </template>
 
@@ -10,6 +10,9 @@ import { initFlowbite } from "flowbite";
 import AdminLayout from "../Components/AdminLayout.vue";
 import ProductList from "../Components/ProductList.vue";
 
+defineProps({
+    products:Array
+})
 // initialize components based on data attribute selectors
 onMounted(() => {
     initFlowbite();
