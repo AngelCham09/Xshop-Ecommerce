@@ -242,9 +242,6 @@
                                 </th>
                                 <th scope="col" class="px-4 py-3">Category</th>
                                 <th scope="col" class="px-4 py-3">Brand</th>
-                                <th scope="col" class="px-4 py-3">
-                                    Description
-                                </th>
                                 <th scope="col" class="px-4 py-3">Price</th>
                                 <th scope="col" class="px-4 py-3">In Stock</th>
                                 <th scope="col" class="px-4 py-3">Publish</th>
@@ -266,25 +263,48 @@
                                     {{ product.title }}
                                 </th>
                                 <td class="px-4 py-3">
-                                    {{ product.category_id }}
+                                    {{ product.category.name }}
                                 </td>
                                 <td class="px-4 py-3">
-                                    {{ product.brand_id }}
-                                </td>
-                                <td class="px-4 py-3">
-                                    {{ product.description }}
+                                    {{ product.brand.name }}
                                 </td>
                                 <td class="px-4 py-3">{{ product.price }}</td>
-                                <td class="px-4 py-3">{{ product.inStock }}</td>
                                 <td class="px-4 py-3">
-                                    {{ product.published }}
+                                    <span
+                                        v-if="product.inStock == 0"
+                                        class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"
+                                        >InStock</span
+                                    >
+                                    <span
+                                        v-else
+                                        class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300"
+                                        >Out of stock</span
+                                    >
+                                </td>
+                                <td class="px-4 py-3">
+                                    <button
+                                        v-if="product.published == 0"
+                                        type="button"
+                                        class="px-3 py-2 text-xs font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                                    >
+                                        Published
+                                    </button>
+                                    <button
+                                        v-else
+                                        type="button"
+                                        class="px-3 py-2 text-xs font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                                    >
+                                        Unpublished
+                                    </button>
                                 </td>
                                 <td
                                     class="px-4 py-3 flex items-center justify-end"
                                 >
                                     <button
-                                        id="apple-imac-27-dropdown-button"
-                                        data-dropdown-toggle="apple-imac-27-dropdown"
+                                        :id="'dropdown-button-' + product.id"
+                                        :data-dropdown-toggle="
+                                            'dropdown-' + product.id
+                                        "
                                         class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100"
                                         type="button"
                                     >
@@ -301,32 +321,38 @@
                                         </svg>
                                     </button>
                                     <div
-                                        id="apple-imac-27-dropdown"
+                                        :id="'dropdown-' + product.id"
                                         class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600"
                                     >
                                         <ul
                                             class="py-1 text-sm text-gray-700 dark:text-gray-200"
-                                            aria-labelledby="apple-imac-27-dropdown-button"
+                                            :aria-labelledby="
+                                                'dropdown-button-' + product.id
+                                            "
                                         >
                                             <li>
                                                 <a
                                                     href="#"
-                                                    class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                                    >Show</a
+                                                    @click="
+                                                        openProductModal(
+                                                            false,
+                                                            product
+                                                        )
+                                                    "
+                                                    class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                                                    >Edit</a
                                                 >
-                                            </li>
-                                            <li>
-                                                <button
-                                                    @click="openProductModal()"
-                                                    class="block w py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                                >
-                                                    Edit
-                                                </button>
                                             </li>
                                         </ul>
                                         <div class="py-1">
                                             <a
                                                 href="#"
+                                                @click="
+                                                    deleteProduct(
+                                                        product,
+                                                        index
+                                                    )
+                                                "
                                                 class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                                                 >Delete</a
                                             >
@@ -450,9 +476,12 @@
         <!-- Background overlay -->
         <div class="fixed inset-0 bg-gray-900 bg-opacity-50"></div>
 
-        <div class="relative p-4 w-full max-w-md max-h-full z-10">
+        <!-- Modal container -->
+        <div class="relative p-4 w-full max-w-4xl z-10">
             <!-- Modal content -->
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <div
+                class="relative bg-white rounded-lg shadow dark:bg-gray-700 flex flex-col max-h-[90vh] w-full"
+            >
                 <!-- Modal header -->
                 <div
                     class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600"
@@ -460,10 +489,14 @@
                     <h3
                         class="text-lg font-semibold text-gray-900 dark:text-white"
                     >
-                        {{ isEdit ? "Edit Product" : "Create new product" }}
+                        {{ isEdit ? "Edit Product" : "Create New Product" }}
                     </h3>
                     <button
-                        @click="() => {productModal = false}"
+                        @click="
+                            () => {
+                                productModal = false;
+                            }
+                        "
                         type="button"
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                     >
@@ -485,122 +518,193 @@
                         <span class="sr-only">Close modal</span>
                     </button>
                 </div>
+
                 <!-- Modal body -->
-                <form class="p-4 md:p-5" @submit.prevent="submitProduct">
-                    <div class="grid gap-4 mb-4 grid-cols-2">
-                        <div class="col-span-2">
-                            <label
-                                for="name"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >Name</label
-                            >
-                            <input
-                                v-model="productData.title"
-                                type="text"
-                                name="name"
-                                id="name"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                placeholder="Type product name"
-                                required=""
-                            />
-                        </div>
-                        <div class="col-span-2 sm:col-span-1">
-                            <label
-                                for="price"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >Price</label
-                            >
-                            <input
-                                v-model="productData.price"
-                                type="number"
-                                name="price"
-                                step="0.01"
-                                min="0.00"
-                                id="price"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                placeholder="$2999"
-                                required=""
-                            />
-                        </div>
-                        <div class="col-span-2 sm:col-span-1">
-                            <label
-                                for="qty"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >Quantity</label
-                            >
-                            <input
-                                v-model="productData.quantity"
-                                type="number"
-                                name="qty"
-                                id="qty"
-                                min="1"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                placeholder="$2999"
-                                required=""
-                            />
-                        </div>
-                        <div class="col-span-2 sm:col-span-1">
-                            <label
-                                for="brand"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >Brand</label
-                            >
-                            <select
-                                v-model="productData.brand_id"
-                                id="brand"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                            >
-                                <option
-                                    v-for="brand in brands"
-                                    :key="brand.id"
-                                    :value="brand.id"
-                                >
-                                    {{ brand.name }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-span-2 sm:col-span-1">
-                            <label
-                                for="category"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >Category</label
-                            >
-                            <select
-                                v-model="productData.category_id"
-                                id="category"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                            >
-                                <option
-                                    v-for="category in categories"
-                                    :key="category.id"
-                                    :value="category.id"
-                                >
-                                    {{ category.name }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-span-2">
-                            <label
-                                for="description"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >Product Description</label
-                            >
-                            <textarea
-                                v-model="productData.description"
-                                id="description"
-                                rows="4"
-                                class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                placeholder="Write product description here"
-                            ></textarea>
-                        </div>
-                    </div>
-                    <button
-                        type="submit"
-                        class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                <div class="p-4 md:p-5 overflow-y-auto flex-grow">
+                    <form
+                        @submit.prevent="
+                            isEdit ? updateProduct() : submitProduct()
+                        "
                     >
-                        Submit
-                    </button>
-                </form>
+                        <div class="grid gap-4 mb-4 grid-cols-2">
+                            <div class="col-span-2">
+                                <label
+                                    for="name"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                    >Name</label
+                                >
+                                <input
+                                    v-model="productData.title"
+                                    type="text"
+                                    name="name"
+                                    id="name"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    placeholder="Type product name"
+                                    required=""
+                                />
+                            </div>
+                            <div class="col-span-2 sm:col-span-1">
+                                <label
+                                    for="price"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                    >Price</label
+                                >
+                                <input
+                                    v-model="productData.price"
+                                    type="number"
+                                    name="price"
+                                    step="0.01"
+                                    min="0.00"
+                                    id="price"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    placeholder="$2999"
+                                    required=""
+                                />
+                            </div>
+                            <div class="col-span-2 sm:col-span-1">
+                                <label
+                                    for="qty"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                    >Quantity</label
+                                >
+                                <input
+                                    v-model="productData.quantity"
+                                    type="number"
+                                    name="qty"
+                                    id="qty"
+                                    min="1"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    placeholder="$2999"
+                                    required=""
+                                />
+                            </div>
+                            <div class="col-span-2 sm:col-span-1">
+                                <label
+                                    for="brand"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                    >Brand</label
+                                >
+                                <select
+                                    v-model="productData.brand_id"
+                                    id="brand"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                >
+                                    <option
+                                        v-for="brand in brands"
+                                        :key="brand.id"
+                                        :value="brand.id"
+                                    >
+                                        {{ brand.name }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-span-2 sm:col-span-1">
+                                <label
+                                    for="category"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                    >Category</label
+                                >
+                                <select
+                                    v-model="productData.category_id"
+                                    id="category"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                >
+                                    <option
+                                        v-for="category in categories"
+                                        :key="category.id"
+                                        :value="category.id"
+                                    >
+                                        {{ category.name }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-span-2">
+                                <label
+                                    for="description"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                    >Product Description</label
+                                >
+                                <textarea
+                                    v-model="productData.description"
+                                    id="description"
+                                    rows="4"
+                                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="Write product description here"
+                                ></textarea>
+                            </div>
+                            <div class="col-span-2">
+                                <label
+                                    for="photo"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                    >Product Image</label
+                                >
+                                <el-upload
+                                    v-model:file-list="productImages"
+                                    list-type="picture-card"
+                                    multiple
+                                    :on-preview="handlePictureCardPreview"
+                                    :on-remove="handleRemove"
+                                    :on-change="handleFileChange"
+                                    :auto-upload="false"
+                                >
+                                    <el-icon><Plus /></el-icon>
+                                </el-upload>
+
+                                <el-dialog v-model="dialogVisible">
+                                    <img
+                                        w-full
+                                        :src="dialogImageUrl"
+                                        alt="Preview Image"
+                                    />
+                                </el-dialog>
+                            </div>
+
+                            <div class="col-span-2">
+                                <div class="flex flex-nowrap mb-8">
+                                    <div
+                                        v-if="
+                                            productData.product_images &&
+                                            productData.product_images.length >
+                                                0
+                                        "
+                                        v-for="(
+                                            pimage, index
+                                        ) in productData.product_images"
+                                        :key="pimage.id"
+                                        class="relative me-2"
+                                    >
+                                        <!-- Product Image -->
+                                        <img
+                                            class="w-32 h-32 rounded"
+                                            :src="'/storage/' + pimage.image"
+                                            alt="Product Image"
+                                        />
+
+                                        <!-- Red Circle for additional icon/indicator -->
+                                        <span
+                                            class="absolute top-0 right-0 transform -translate-y-1/2 w-3.5 h-3.5 bg-red-400 border-2 border-white dark:border-gray-800 rounded-full"
+                                        >
+                                            <span
+                                                @click="
+                                                    deleteImage(pimage, index)
+                                                "
+                                                class="text-white text-xs font-bold absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+                                                >x</span
+                                            >
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        >
+                            Submit
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -609,14 +713,17 @@
 import { usePage, useForm } from "@inertiajs/vue3";
 import { ref, onMounted } from "vue";
 import { router } from "@inertiajs/vue3";
+import { Plus } from "@element-plus/icons-vue";
 
-const products = usePage().props.products;
+defineProps({
+    products: Array,
+});
 const brands = usePage().props.brands;
 const categories = usePage().props.categories;
 const isEdit = ref(false);
 const productModal = ref(false);
 
-const productData = useForm({
+const productData = ref({
     id: "",
     title: "",
     price: 0,
@@ -629,26 +736,43 @@ const productData = useForm({
     category_id: "",
 });
 
+//Image
 const productImages = ref([]);
+const dialogImageUrl = ref("");
+const dialogVisible = ref(false);
 
+const handleFileChange = (file) => {
+    productImages.value.push(file);
+};
+
+const handlePictureCardPreview = (file) => {
+    dialogImageUrl.value = file.url;
+    dialogVisible.value = true;
+};
+
+const handleRemove = (file) => {
+    console.log(file);
+};
+
+//Submit product
 const submitProduct = async () => {
-    // const formData = new FormData();
+    const formData = new FormData();
 
-    // // Append the non-array properties from productData
-    // for (const [key, value] of Object.entries(productData.value)) {
-    //     // Skip the product_images array (we'll handle it separately)
-    //     if (key !== "product_images") {
-    //         formData.append(key, value);
-    //     }
-    // }
+    // Append the non-array properties from productData
+    for (const [key, value] of Object.entries(productData.value)) {
+        // Skip the product_images array (we'll handle it separately)
+        if (key !== "product_images") {
+            formData.append(key, value);
+        }
+    }
 
-    // // Append product_images separately as an array of raw image files
-    // for (const image of productImages.value) {
-    //     formData.append("product_images[]", image.raw);
-    // }
+    // Append product_images separately as an array of raw image files
+    for (const image of productImages.value) {
+        formData.append("product_images[]", image.raw);
+    }
 
     try {
-        await router.post("products/store", productData, {
+        await router.post("products/store", formData, {
             onSuccess: (page) => {
                 Swal.fire({
                     toast: true,
@@ -657,6 +781,7 @@ const submitProduct = async () => {
                     showConfirmButton: false,
                     title: page.props.flash.success,
                 });
+                productModal.value = false;
             },
             onError: (errors) => {
                 Swal.fire({
@@ -671,16 +796,115 @@ const submitProduct = async () => {
     } catch (error) {
         console.error("Error submitting the form:", error);
     }
-
-    productModal.value = false;
 };
 
-const openProductModal = (create = false) => {
+const openProductModal = (create = false, product = null) => {
     productModal.value = true;
+    isEdit.value = false;
+    resetData();
     if (!create) {
         isEdit.value = true;
+        productData.value = { ...product };
+    }
+};
+
+const resetData = () => {
+    productData.value = {
+        id: "",
+        title: "",
+        price: 0,
+        quantity: 1,
+        description: "",
+        product_images: [],
+        published: "",
+        inStock: "",
+        brand_id: "",
+        category_id: "",
+    };
+    dialogImageUrl.value = "";
+    productImages.value = [];
+};
+
+const deleteImage = async (pimage, index) => {
+    try {
+        await router.delete("/admin/products/image/" + pimage.id, {
+            onSuccess: (page) => {
+                productData.value.product_images.splice(index, 1);
+                Swal.fire({
+                    toast: true,
+                    icon: "success",
+                    position: "top-end",
+                    showConfirmButton: false,
+                    title: page.props.flash.success,
+                });
+            },
+        });
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+const updateProduct = async () => {
+    const formData = new FormData();
+
+    // Append the non-array properties from productData
+    for (const [key, value] of Object.entries(productData.value)) {
+        // Skip the product_images array (we'll handle it separately)
+        if (key !== "product_images") {
+            formData.append(key, value);
+        }
     }
 
+    // Append product_images separately as an array of raw image files
+    for (const image of productImages.value) {
+        formData.append("product_images[]", image.raw);
+    }
 
+    try {
+        await router.post("products/update/" + productData.value.id, formData, {
+            onSuccess: (page) => {
+                Swal.fire({
+                    toast: true,
+                    icon: "success",
+                    position: "top-end",
+                    showConfirmButton: false,
+                    title: page.props.flash.success,
+                });
+                productModal.value = false;
+            },
+        });
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+const deleteProduct = (product, index) => {
+    Swal.fire({
+        title: "Are you sure ?",
+        text: "This action cannot be undo.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Confirm",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            try {
+                router.delete("products/destroy/" + product.id, {
+                    onSuccess: (page) => {
+                        Swal.fire({
+                            toast: true,
+                            icon: "success",
+                            position: "top-end",
+                            showConfirmButton: false,
+                            title: page.props.flash.success,
+                        });
+                    },
+                });
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    });
 };
 </script>

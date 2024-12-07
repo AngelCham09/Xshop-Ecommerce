@@ -10,6 +10,8 @@ const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 import VueSweetalert2 from "vue-sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
+import ElementPlus from "element-plus";
+import "element-plus/dist/index.css";
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
@@ -23,6 +25,7 @@ createInertiaApp({
             app.use(plugin)
             app.use(ZiggyVue)
             app.use(VueSweetalert2),
+            app.use(ElementPlus),
             window.Swal = app.config.globalProperties.$swal
             app.mount(el);
     },
