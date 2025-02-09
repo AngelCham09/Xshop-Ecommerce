@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\CartController;
+use App\Http\Controllers\User\ProductListController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\RedirectAdmin;
@@ -12,7 +13,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', [UserController::class, 'index'])->name('user.home');
+Route::get('/', [UserController::class, 'index'])->name('home');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -31,6 +32,14 @@ Route::prefix('cart')->controller(CartController::class)->group(function () {
     Route::patch('update/{product}', 'update')->name(
     'cart.update');
     Route::delete('delete/{product}', 'delete')->name('cart.delete');
+});
+
+///routes for product list and filter
+Route::prefix('products')->controller(ProductListController::class)->group(function () {
+    Route::get('/', 'index')->name('products.index');
+    // Route::get('/{product}', 'show')->name('products.show');
+    // Route::get('/category/{category}', 'category')->name('products.category');
+    // Route::get('/brand/{brand}', 'brand')->name('products.brand');
 });
 
 //admin route

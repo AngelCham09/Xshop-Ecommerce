@@ -118,8 +118,8 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <a
-                                        href="#"
-                                        class="font-medium text-red-600 dark:text-red-500 hover:underline"
+                                        @click="remove(product)"
+                                        class="cursor-pointer font-medium text-red-600 dark:text-red-500"
                                         >Remove</a
                                     >
                                 </td>
@@ -210,5 +210,9 @@ const update = (product, quantity) => {
     router.patch(route('cart.update', product), {
         quantity,
     })
+}
+
+const remove = (product) => {
+    router.delete(route('cart.delete', product))
 }
 </script>

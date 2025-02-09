@@ -14,7 +14,8 @@ class Cart
         if ($user = auth()->user()) {
             return CartItem::whereUserId($user->id)->count();
         }else{
-            return array_reduce(self::getCookieCartItems(), fn($carry, $item) => $carry + $item['quantity'], 0);
+            return
+            count(self::getCookieCartItems());
         }
 
     }

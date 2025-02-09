@@ -26,17 +26,16 @@ class CartController extends Controller
                     'cartItems' => $cartItems,
                     'userAddress' => $userAddress
                 ]);
-            }else{
-                $cartItems = Cart::getCookieCartItems();
-                if(count($cartItems) > 0)
-                {
-                    $cartItems = new CartResource(Cart::getProductsAndCartItems());
-                    return Inertia::render('User/CartList',[
-                        'cartItems' => $cartItems
-                    ]);
-                }else{
-                    return redirect()->back();
-                }
+            }
+        } else {
+            $cartItems = Cart::getCookieCartItems();
+            if (count($cartItems) > 0) {
+                $cartItems = new CartResource(Cart::getProductsAndCartItems());
+                return Inertia::render('User/CartList', [
+                    'cartItems' => $cartItems
+                ]);
+            } else {
+                return redirect()->back();
             }
         }
 
@@ -63,7 +62,7 @@ class CartController extends Controller
             $cartItems = Cart::getCookieCartItems();
             $isProductExists = false;
 
-            foreach ($cartItems as $item) {
+            foreach ($cartItems as &$item) {
                 if ($item['product_id'] === $product->id) {
                     $item['quantity'] += $quantity;
                     $isProductExists = true;
@@ -79,6 +78,7 @@ class CartController extends Controller
                     'price' => $product->price
                 ];
             }
+
             Cart::setCookieCartItems($cartItems);
         }
 
@@ -130,9 +130,11 @@ class CartController extends Controller
         } else {
 
             $cartItems = Cart::getCartItems();
+
             foreach ($cartItems as $i => &$item) {
                 if ($item['product_id'] === $product->id) {
-                    array_slice($cartItems, $i, 1);
+
+                    unset($cartItems[$i]);
                     break;
                 }
             }
