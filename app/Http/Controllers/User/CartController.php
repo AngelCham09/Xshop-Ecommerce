@@ -4,13 +4,42 @@ namespace App\Http\Controllers\User;
 
 use App\Helper\Cart;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CartResource;
 use App\Models\CartItem;
 use App\Models\Product;
+use App\Models\UserAddress;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class CartController extends Controller
 {
-    public function view() {}
+    public function view(Request $request, Product $product)
+    {
+        $user = $request->user();
+        if($user)
+        {
+            $cartItems = CartItem::where('user_id', $user->id)->get();
+            $userAddress = UserAddress::where('user_id', $user->id)->where('isMain', 1)->first();
+            if($cartItems->count() > 0)
+            {
+                return Inertia::render('User/CartList', [
+                    'cartItems' => $cartItems,
+                    'userAddress' => $userAddress
+                ]);
+            }
+        } else {
+            $cartItems = Cart::getCookieCartItems();
+            if (count($cartItems) > 0) {
+                $cartItems = new CartResource(Cart::getProductsAndCartItems());
+                return Inertia::render('User/CartList', [
+                    'cartItems' => $cartItems
+                ]);
+            } else {
+                return redirect()->back();
+            }
+        }
+
+    }
 
     public function store(Request $request, Product $product)
     {
@@ -33,7 +62,7 @@ class CartController extends Controller
             $cartItems = Cart::getCookieCartItems();
             $isProductExists = false;
 
-            foreach ($cartItems as $item) {
+            foreach ($cartItems as &$item) {
                 if ($item['product_id'] === $product->id) {
                     $item['quantity'] += $quantity;
                     $isProductExists = true;
@@ -49,6 +78,7 @@ class CartController extends Controller
                     'price' => $product->price
                 ];
             }
+
             Cart::setCookieCartItems($cartItems);
         }
 
@@ -100,9 +130,11 @@ class CartController extends Controller
         } else {
 
             $cartItems = Cart::getCartItems();
+
             foreach ($cartItems as $i => &$item) {
                 if ($item['product_id'] === $product->id) {
-                    array_slice($cartItems, $i, 1);
+
+                    unset($cartItems[$i]);
                     break;
                 }
             }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Sluggable\HasSlug;
@@ -47,5 +48,27 @@ class Product extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function cartItem()
+    {
+        return $this->hasMany(CartItem::class);
+    }
+
+    public function scopeFiltered(Builder $query)
+    {
+        $query
+        ->when(request('brands'), function (Builder $q){
+            $q->whereIn('brand_id', request('brands'));
+        })
+        ->when(request('categories'), function (Builder $q) {
+            $q->whereIn('category_id', request('categories'));
+        })
+        ->when(request('prices'), function (Builder $q) {
+            $q->whereBetween('price', [
+                request('prices.from', 0),
+                request('prices.to', 1000000)
+            ]);
+        });
     }
 }
