@@ -51,9 +51,24 @@
                                 <td class="px-6 py-4">
                                     <div class="flex items-center">
                                         <button
-                                            @click.prevent="update(product, carts[itemId(product.id)].quantity - 1)"
-                                            :class="[carts[itemId(product.id)].quantity > 1 ? 'cursor-pointer text-purple-600' : 'cursor-not-allowed text-gray-300 dark:text-gray-500', 'inline-flex items-center justify-center p-1 me-3 text-sm font-medium h-6 w-6 text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700']"
-                                            :disabled="carts[itemId(product.id)].quantity <= 1"
+                                            @click.prevent="
+                                                update(
+                                                    product,
+                                                    carts[itemId(product.id)]
+                                                        .quantity - 1
+                                                )
+                                            "
+                                            :class="[
+                                                carts[itemId(product.id)]
+                                                    .quantity > 1
+                                                    ? 'cursor-pointer text-purple-600'
+                                                    : 'cursor-not-allowed text-gray-300 dark:text-gray-500',
+                                                'inline-flex items-center justify-center p-1 me-3 text-sm font-medium h-6 w-6 text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700',
+                                            ]"
+                                            :disabled="
+                                                carts[itemId(product.id)]
+                                                    .quantity <= 1
+                                            "
                                             type="button"
                                         >
                                             <span class="sr-only"
@@ -77,7 +92,10 @@
                                         </button>
                                         <div>
                                             <input
-                                                v-model="carts[itemId(product.id)].quantity"
+                                                v-model="
+                                                    carts[itemId(product.id)]
+                                                        .quantity
+                                                "
                                                 type="number"
                                                 id="first_product"
                                                 class="bg-gray-50 w-14 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block px-2.5 py-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -86,7 +104,13 @@
                                             />
                                         </div>
                                         <button
-                                            @click.prevent="update(product, carts[itemId(product.id)].quantity + 1)"
+                                            @click.prevent="
+                                                update(
+                                                    product,
+                                                    carts[itemId(product.id)]
+                                                        .quantity + 1
+                                                )
+                                            "
                                             class="inline-flex items-center justify-center h-6 w-6 p-1 ms-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                                             type="button"
                                         >
@@ -138,58 +162,127 @@
                     <p class="leading-relaxed mb-5 text-gray-600">
                         Total : $ {{ total }}
                     </p>
-                    <h2
-                        class="text-gray-900 text-lg mb-1 font-medium title-font"
-                    >
-                        Shipping Address
-                    </h2>
-                    <p class="leading-relaxed mb-5 text-gray-600">
-                        No 11, Jalan Mega 13, Taman Mega Jaya, 56100 Kuala
-                        Mlupur
-                    </p>
-                    <div class="relative mb-4">
-                        <label
-                            for="name"
-                            class="leading-7 text-sm text-gray-600"
-                            >Name</label
+                    <div v-if="userAddress">
+                        <h2
+                            class="text-gray-900 text-lg mb-1 font-medium title-font"
                         >
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                        />
+                            Shipping Address
+                        </h2>
+                        <p class="leading-relaxed mb-5 text-gray-600">
+                            {{ userAddress.address1 }}
+                        </p>
+                        <p class="leading-relaxed mb-5 text-gray-600">
+                            or you can add new below
+                        </p>
                     </div>
-                    <div class="relative mb-4">
-                        <label
-                            for="email"
-                            class="leading-7 text-sm text-gray-600"
-                            >Email</label
+                    <div v-else>
+                        <p class="leading-relaxed mb-5 text-gray-600">
+                            Add shipping address to continue
+                        </p>
+                    </div>
+
+                    <form @submit.prevent="submit">
+                        <div class="relative mb-4">
+                            <label
+                                for="address"
+                                class="leading-7 text-sm text-gray-600"
+                                >Address</label
+                            >
+                            <input
+                                v-model="form.address"
+                                type="text"
+                                id="address"
+                                name="address"
+                                class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                            />
+                        </div>
+                        <div class="relative mb-4">
+                            <label
+                                for="city"
+                                class="leading-7 text-sm text-gray-600"
+                                >City</label
+                            >
+                            <input
+                                v-model="form.city"
+                                type="text"
+                                id="city"
+                                name="city"
+                                class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                            />
+                        </div>
+
+                        <div class="relative mb-4">
+                            <label
+                                for="state"
+                                class="leading-7 text-sm text-gray-600"
+                                >State</label
+                            >
+                            <input
+                                v-model="form.state"
+                                type="text"
+                                id="state"
+                                name="state"
+                                class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                            />
+                        </div>
+                        <div class="relative mb-4">
+                            <label
+                                for="postcode"
+                                class="leading-7 text-sm text-gray-600"
+                                >Postcode</label
+                            >
+                            <input
+                                v-model="form.postcode"
+                                type="text"
+                                id="postcode"
+                                name="postcode"
+                                class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                            />
+                        </div>
+                        <div class="relative mb-4">
+                            <label
+                                for="country"
+                                class="leading-7 text-sm text-gray-600"
+                                >Country Code</label
+                            >
+                            <input
+                                v-model="form.country"
+                                type="text"
+                                id="country"
+                                name="country"
+                                class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                            />
+                        </div>
+                        <div class="relative mb-4">
+                            <label
+                                for="type"
+                                class="leading-7 text-sm text-gray-600"
+                                >Address Type</label
+                            >
+                            <input
+                                v-model="form.type"
+                                type="text"
+                                id="type"
+                                name="type"
+                                class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                            />
+                        </div>
+
+                        <button
+                            v-if="formfilled || userAddress"
+                            type="submit"
+                            class="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
                         >
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                        />
-                    </div>
-                    <div class="relative mb-4">
-                        <label
-                            for="message"
-                            class="leading-7 text-sm text-gray-600"
-                            >Message</label
+                            Checkout
+                        </button>
+                        <button
+                            v-else
+                            type="submit"
+                            class="text-white bg-gray-500 border-0 py-2 px-6 focus:outline-none hover:bg-gray-600 rounded text-lg"
                         >
-                        <textarea
-                            id="message"
-                            name="message"
-                            class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"
-                        ></textarea>
-                    </div>
-                    <button
-                        class="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
-                    >
-                        Checkout
-                    </button>
+                            Add address to continue
+                        </button>
+                    </form>
                     <p class="text-xs text-gray-500 mt-3">Continue Shopping</p>
                 </div>
             </div>
@@ -197,22 +290,58 @@
     </UserLayouts>
 </template>
 <script setup>
-import { computed } from "vue";
+import { computed, reactive } from "vue";
 import UserLayouts from "./Layouts/UserLayouts.vue";
 import { router, usePage } from "@inertiajs/vue3";
+
+defineProps({
+    userAddress: Object,
+});
 
 const carts = computed(() => usePage().props.cart.data.items);
 const products = computed(() => usePage().props.cart.data.products);
 const total = computed(() => usePage().props.cart.data.total);
 const itemId = (id) => carts.value.findIndex((item) => item.product_id === id);
 
+const form = reactive({
+    address: "",
+    city: "",
+    state: "",
+    postcode: "",
+    country: "",
+    type: "",
+});
+
+const formfilled = computed(() => {
+    return (
+        form.address.length > 0 &&
+        form.city.length > 0 &&
+        form.state.length > 0 &&
+        form.country.length > 0 &&
+        form.postcode.length > 0 &&
+        form.type.length > 0
+    );
+});
+
 const update = (product, quantity) => {
-    router.patch(route('cart.update', product), {
+    router.patch(route("cart.update", product), {
         quantity,
-    })
-}
+    });
+};
 
 const remove = (product) => {
-    router.delete(route('cart.delete', product))
-}
+    router.delete(route("cart.delete", product));
+};
+
+const submit = () => {
+    router.visit(route("checkout.store"), {
+        method: "post",
+        data: {
+            carts: carts.value,
+            products: products.value,
+            total: total.value,
+            address: form,
+        },
+    });
+};
 </script>
