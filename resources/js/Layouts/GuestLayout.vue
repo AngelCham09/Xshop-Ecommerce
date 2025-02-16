@@ -1,10 +1,27 @@
 <script setup>
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
-import { Link } from '@inertiajs/vue3';
+import ApplicationLogo from "@/Components/ApplicationLogo.vue";
+import { Link } from "@inertiajs/vue3";
 </script>
 
 <template>
-    <div
+    <section class="bg-gray-50 min-h-screen flex items-center justify-center">
+        <div
+            class="bg-gray-50 flex rounded-2xl shadow-lg max-w-4xl p-5 items-center h-[80vh]"
+        >
+            <div class="md:w-1/2 px-16">
+                <slot />
+            </div>
+
+            <div class="md:block hidden w-1/2 h-full">
+                <img
+                    class="rounded-2xl h-full object-cover"
+                    src="images/login.jpg"
+                    alt=""
+                />
+            </div>
+        </div>
+    </section>
+    <!-- <div
         class="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0 dark:bg-gray-900"
     >
         <div>
@@ -18,5 +35,5 @@ import { Link } from '@inertiajs/vue3';
         >
             <slot />
         </div>
-    </div>
+    </div> -->
 </template>
