@@ -18,6 +18,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CheckoutController extends Controller
 {
+    public function view()
+    {
+        return Inertia::render('User/Checkout');
+    }
+
     public function store(Request $request)
     {
         $user = $request->user();

@@ -47,6 +47,7 @@ class HandleInertiaRequests extends Middleware
             'canLogin' => app('router')->has('login'),
             'canRegister' => app('router')->has('register'),
             'laravelVersion' => Application::VERSION,
+            'currentRoute' => $request->route() ? $request->route()->getName() : null,
             'phpVersion' => PHP_VERSION,
         ];
     }

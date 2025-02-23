@@ -7,6 +7,7 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 import { Head, Link, useForm } from "@inertiajs/vue3";
 import { Icon } from "@iconify/vue";
+import { ref } from "vue";
 
 defineProps({
     canResetPassword: {
@@ -16,6 +17,12 @@ defineProps({
         type: String,
     },
 });
+
+const showPassword = ref(false);
+
+const togglePasswordVisibility = () => {
+    showPassword.value = !showPassword.value;
+};
 
 const form = useForm({
     email: "",
@@ -55,17 +62,18 @@ const submit = () => {
             <div class="relative">
                 <input
                     class="p-3 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    type="password"
+                    :type="showPassword ? 'text' : 'password'"
                     name="password"
                     v-model="form.password"
                     required
                     placeholder="Password"
                 />
                 <Icon
-                    icon="lucide:eye"
+                    :icon="showPassword ? 'lucide:eye-off' : 'lucide:eye'"
                     width="24"
                     height="24"
                     class="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
+                    @click="togglePasswordVisibility"
                 />
             </div>
 

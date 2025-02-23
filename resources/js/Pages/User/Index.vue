@@ -11,11 +11,11 @@
                 </h2>
 
                 <!--Product List Component-->
-                <ProductList :products="products" />
+                <ProductList :products="products" :columns="4"/>
 
                 <div class="flex justify-center mt-10">
 
-                    <Link :href="route('products.index')" type="button" class="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">View All Products</Link>
+                    <Link :href="route('products.index')" type="button" class="bg-gray-200 hover:bg-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Show More</Link>
                 </div>
             </div>
         </div>
