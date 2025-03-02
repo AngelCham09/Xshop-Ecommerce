@@ -4,7 +4,7 @@
             <div
                 class="container px-5 py-24 mx-auto flex sm:flex-nowrap flex-wrap"
             >
-                <div class="lg:w-2/3 md:w-1/2rounded-lg sm:mr-10 p-10">
+                <div class="lg:w-2/3 md:w-1/2rounded-lg sm:mr-10">
                     <!--cart list-->
 
                     <table
@@ -152,6 +152,163 @@
                     </table>
                 </div>
                 <div
+                    class="mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full"
+                >
+                    <div
+                        class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6"
+                    >
+                        <p
+                            class="text-xl font-semibold text-gray-900 dark:text-white"
+                        >
+                            Order summary
+                        </p>
+
+                        <div class="space-y-4">
+                            <div class="space-y-2">
+                                <dl
+                                    class="flex items-center justify-between gap-4"
+                                >
+                                    <dt
+                                        class="text-base font-normal text-gray-500 dark:text-gray-400"
+                                    >
+                                        Original price
+                                    </dt>
+                                    <dd
+                                        class="text-base font-medium text-gray-900 dark:text-white"
+                                    >
+                                        $7,592.00
+                                    </dd>
+                                </dl>
+
+                                <dl
+                                    class="flex items-center justify-between gap-4"
+                                >
+                                    <dt
+                                        class="text-base font-normal text-gray-500 dark:text-gray-400"
+                                    >
+                                        Savings
+                                    </dt>
+                                    <dd
+                                        class="text-base font-medium text-green-600"
+                                    >
+                                        -$299.00
+                                    </dd>
+                                </dl>
+
+                                <dl
+                                    class="flex items-center justify-between gap-4"
+                                >
+                                    <dt
+                                        class="text-base font-normal text-gray-500 dark:text-gray-400"
+                                    >
+                                        Store Pickup
+                                    </dt>
+                                    <dd
+                                        class="text-base font-medium text-gray-900 dark:text-white"
+                                    >
+                                        $99
+                                    </dd>
+                                </dl>
+
+                                <dl
+                                    class="flex items-center justify-between gap-4"
+                                >
+                                    <dt
+                                        class="text-base font-normal text-gray-500 dark:text-gray-400"
+                                    >
+                                        Tax
+                                    </dt>
+                                    <dd
+                                        class="text-base font-medium text-gray-900 dark:text-white"
+                                    >
+                                        $799
+                                    </dd>
+                                </dl>
+                            </div>
+
+                            <dl
+                                class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700"
+                            >
+                                <dt
+                                    class="text-base font-bold text-gray-900 dark:text-white"
+                                >
+                                    Total
+                                </dt>
+                                <dd
+                                    class="text-base font-bold text-gray-900 dark:text-white"
+                                >
+                                    $8,191.00
+                                </dd>
+                            </dl>
+                        </div>
+
+                        <Link
+                            :href="route('checkout.view')"
+                            class="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium btn-primary"
+                            >Proceed to Checkout</Link
+                        >
+
+                        <div class="flex items-center justify-center gap-2">
+                            <span
+                                class="text-sm font-normal text-gray-500 dark:text-gray-400"
+                            >
+                                or
+                            </span>
+                            <Link
+                                :href="route('products.index')"
+                                title=""
+                                class="inline-flex items-center gap-2 text-sm font-medium text-primary-700 underline hover:no-underline dark:text-primary-500"
+                            >
+                                Continue Shopping
+                                <svg
+                                    class="h-5 w-5"
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke="currentColor"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M19 12H5m14 0-4 4m4-4-4-4"
+                                    />
+                                </svg>
+                            </Link>
+                        </div>
+                    </div>
+
+                    <!-- <div
+                        class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6"
+                    >
+                        <form class="space-y-4">
+                            <div>
+                                <label
+                                    for="voucher"
+                                    class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                                >
+                                    Do you have a voucher or gift card?
+                                </label>
+                                <input
+                                    type="text"
+                                    id="voucher"
+                                    class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                                    placeholder=""
+                                    required
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                class="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium btn-primary"
+                            >
+                                Apply Code
+                            </button>
+                        </form>
+                    </div> -->
+                </div>
+
+                <!-- <div
                     class="lg:w-1/3 md:w-1/2 bg-white flex flex-col md:ml-auto w-full md:py-8 mt-8 md:mt-0"
                 >
                     <h2
@@ -284,7 +441,7 @@
                         </button>
                     </form>
                     <p class="text-xs text-gray-500 mt-3">Continue Shopping</p>
-                </div>
+                </div> -->
             </div>
         </section>
     </UserLayouts>
@@ -292,7 +449,8 @@
 <script setup>
 import { computed, reactive } from "vue";
 import UserLayouts from "./Layouts/UserLayouts.vue";
-import { router, usePage } from "@inertiajs/vue3";
+import { Link, router, usePage } from "@inertiajs/vue3";
+import OrderSummary from "./Components/OrderSummary.vue";
 
 defineProps({
     userAddress: Object,

@@ -7,7 +7,12 @@
                 :href="route('home')"
                 class="flex items-center space-x-3 rtl:space-x-reverse"
             >
-                <Icon icon="lucide:shopping-bag" width="1.2rem" height="1.2rem" class="mr-2"/>
+                <Icon
+                    icon="lucide:shopping-bag"
+                    width="1.2rem"
+                    height="1.2rem"
+                    class="mr-2"
+                />
                 <span
                     class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
                     >X Shop</span
@@ -17,10 +22,10 @@
                 v-if="canLogin"
                 class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse"
             >
-                <div class="mr-4">
+                <div class="mr-2">
                     <Link
                         :href="route('cart.view')"
-                        class="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        class="relative inline-flex items-center p-2 text-sm font-medium text-center text-white bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -28,7 +33,7 @@
                             viewBox="0 0 24 24"
                             stroke-width="1.5"
                             stroke="currentColor"
-                            class="w-6 h-6"
+                            class="w-5 h-5"
                         >
                             <path
                                 stroke-linecap="round"
@@ -36,10 +41,9 @@
                                 d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
                             />
                         </svg>
-
                         <span class="sr-only">Cart</span>
                         <div
-                            class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900"
+                            class="absolute inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -right-2 dark:border-gray-900"
                         >
                             {{ cart.data.count }}
                         </div>
@@ -86,7 +90,8 @@
                     >
                 </div>
                 <!-- Dropdown menu -->
-                <div v-if="auth.user"
+                <div
+                    v-if="auth.user"
                     class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
                     id="user-dropdown"
                 >
@@ -151,39 +156,62 @@
                     class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700"
                 >
                     <li>
-                        <a
-                            href="#"
-                            class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500"
-                            aria-current="page"
-                            >Home</a
+                        <Link
+                            :href="route('home')"
+                            :class="{
+                                'text-purple-700': currentRoute === 'home',
+                                'text-gray-900': currentRoute !== 'home',
+                            }"
+                            class="block py-2 px-3 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-purple-700 md:p-0 dark:text-white md:dark:hover:text-purple-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                            >Home</Link
                         >
                     </li>
                     <li>
-                        <a
-                            href="#"
-                            class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-                            >About</a
+                        <Link
+                            :href="route('about')"
+                            :class="{
+                                'text-purple-700': currentRoute === 'about',
+                                'text-gray-900': currentRoute !== 'about',
+                            }"
+                            class="block py-2 px-3 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-purple-700 md:p-0 dark:text-white md:dark:hover:text-purple-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                            >About</Link
                         >
                     </li>
                     <li>
-                        <a
-                            href="#"
-                            class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-                            >Services</a
+                        <Link
+                            :href="route('products.index')"
+                            :class="{
+                                'text-purple-700':
+                                    currentRoute === 'products.index',
+                                'text-gray-900':
+                                    currentRoute !== 'products.index',
+                            }"
+                            class="block py-2 px-3 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-purple-700 md:p-0 dark:text-white md:dark:hover:text-purple-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                            >Women</Link
                         >
                     </li>
                     <li>
-                        <a
-                            href="#"
-                            class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-                            >Pricing</a
+                        <Link
+                            :href="route('products.index')"
+                            :class="{
+                                'text-purple-700':
+                                    currentRoute === 'products.index',
+                                'text-gray-900':
+                                    currentRoute !== 'products.index',
+                            }"
+                            class="block py-2 px-3 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-purple-700 md:p-0 dark:text-white md:dark:hover:text-purple-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                            >Men</Link
                         >
                     </li>
                     <li>
-                        <a
-                            href="#"
-                            class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-                            >Contact</a
+                        <Link
+                            :href="route('contact')"
+                            :class="{
+                                'text-purple-700': currentRoute === 'contact',
+                                'text-gray-900': currentRoute !== 'contact',
+                            }"
+                            class="block py-2 px-3 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-purple-700 md:p-0 dark:text-white md:dark:hover:text-purple-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                            >Contact</Link
                         >
                     </li>
                 </ul>
@@ -199,5 +227,6 @@ import { computed } from "vue";
 const canLogin = usePage().props.canLogin;
 const canRegister = usePage().props.canRegister;
 const auth = usePage().props.auth;
-const cart = computed(()=>usePage().props.cart);
+const cart = computed(() => usePage().props.cart);
+const currentRoute = usePage().props.currentRoute;
 </script>

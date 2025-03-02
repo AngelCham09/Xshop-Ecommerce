@@ -634,6 +634,7 @@ function updateFilterProducts() {
                             <div class="lg:col-span-3">
                                 <ProductList
                                     :products="products.data"
+                                    :columns="3"
                                 ></ProductList>
                             </div>
                         </div>

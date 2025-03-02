@@ -15,7 +15,11 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', [UserController::class, 'index'])->name('home');
+Route::get('/', [ UserController::class, 'index'])->name('home');
+Route::get('/about', [ UserController::class, 'about'])->name('about');
+Route::get('/contact', [UserController::class, 'contact'])->name('contact');
+Route::get('/privacy', [UserController::class, 'privacy'])->name('privacy');
+Route::get('/terms', [UserController::class, 'terms'])->name('terms');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -26,6 +30,7 @@ Route::middleware('auth')->group(function () {
 
     //checkout
     Route::prefix('checkout')->controller(CheckoutController::class)->group(function () {
+        Route::get('/', 'view')->name('checkout.view');
         Route::post('order', 'store')->name('checkout.store');
         Route::get('success', 'success')->name('checkout.success');
         Route::get('cancel', 'cancel')->name('checkout.cancel');
