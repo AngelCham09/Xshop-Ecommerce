@@ -1,5 +1,5 @@
 <script setup>
-import UserLayouts from "./Layouts/UserLayouts.vue";
+import UserLayouts from "./Layouts/UserLayout.vue";
 
 import { ref, watch } from "vue";
 import {

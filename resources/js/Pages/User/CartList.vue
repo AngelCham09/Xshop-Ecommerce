@@ -448,7 +448,7 @@
 </template>
 <script setup>
 import { computed, reactive } from "vue";
-import UserLayouts from "./Layouts/UserLayouts.vue";
+import UserLayouts from "./Layouts/UserLayout.vue";
 import { Link, router, usePage } from "@inertiajs/vue3";
 import OrderSummary from "./Components/OrderSummary.vue";
 

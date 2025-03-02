@@ -28,6 +28,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::get('/profile2', [ProfileController::class, 'index'])->name('profile.index');
+
     //checkout
     Route::prefix('checkout')->controller(CheckoutController::class)->group(function () {
         Route::get('/', 'view')->name('checkout.view');
