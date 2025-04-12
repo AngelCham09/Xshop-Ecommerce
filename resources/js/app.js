@@ -5,15 +5,11 @@ import { createInertiaApp } from "@inertiajs/vue3";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { createApp, h } from "vue";
 import { ZiggyVue } from "../../vendor/tightenco/ziggy";
-import PrimeVue from "primevue/config";
-import ToastService from "primevue/toastservice";
+import Swal from "sweetalert2";
+
+window.Swal = Swal;
 
 const appName = import.meta.env.VITE_APP_NAME || "Laravel";
-
-import VueSweetalert2 from "vue-sweetalert2";
-import "sweetalert2/dist/sweetalert2.min.css";
-import ElementPlus from "element-plus";
-import "element-plus/dist/index.css";
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
@@ -23,17 +19,14 @@ createInertiaApp({
             import.meta.glob("./Pages/**/*.vue")
         ),
     setup({ el, App, props, plugin }) {
-        const app = createApp({ render: () => h(App, props) });
-        app.use(plugin);
-        app.use(ZiggyVue);
-        app.use(VueSweetalert2),
-            app.use(ElementPlus),
-            app.use(PrimeVue),
-            app.use(ToastService);
-        window.Swal = app.config.globalProperties.$swal;
+        const app = createApp({ render: () => h(App, props) })
+            .use(plugin)
+            .use(ZiggyVue);
+
         app.mount(el);
     },
     progress: {
         color: "#4B5563",
     },
 });
+

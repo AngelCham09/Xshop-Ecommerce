@@ -8,6 +8,7 @@ use App\Http\Controllers\User\CartController;
 use App\Http\Controllers\User\CheckoutController;
 use App\Http\Controllers\User\DashboardController;
 use App\Http\Controllers\User\ProductListController;
+use App\Http\Controllers\User\UserAddressController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\RedirectAdmin;
@@ -24,11 +25,21 @@ Route::get('/terms', [UserController::class, 'terms'])->name('terms');
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/profile2', [ProfileController::class, 'index'])->name('profile.index');
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+
+
+
+    //Address
+    Route::prefix('address')->controller(UserAddressController::class)->group(function () {
+        Route::get('/', 'index')->name('address.index');
+        // Route::post('store', 'addressStore')->name('address.store');
+        // Route::patch('update/{id}', 'addressUpdate')->name('address.update');
+        Route::delete('delete/{id}', 'delete')->name('address.delete');
+    });
 
     //checkout
     Route::prefix('checkout')->controller(CheckoutController::class)->group(function () {
@@ -55,6 +66,11 @@ Route::prefix('products')->controller(ProductListController::class)->group(funct
     // Route::get('/category/{category}', 'category')->name('products.category');
     // Route::get('/brand/{brand}', 'brand')->name('products.brand');
 });
+
+
+
+
+
 
 //admin route
 Route::group(['prefix' => 'admin', 'middleware' => RedirectAdmin::class], function () {

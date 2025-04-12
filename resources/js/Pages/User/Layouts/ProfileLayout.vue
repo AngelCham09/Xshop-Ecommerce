@@ -104,25 +104,26 @@
 
 <script setup>
 import UserLayout from './UserLayout.vue'
-import { Link } from '@inertiajs/vue3'
+import { Link, usePage } from '@inertiajs/vue3'
 import {
     HomeIcon, UserIcon, GiftIcon, WalletIcon, ShoppingCartIcon,
     HeartIcon, StarIcon, ArrowPathIcon, CheckIcon, EllipsisVerticalIcon,
     EyeIcon, Cog6ToothIcon
 } from '@heroicons/vue/24/outline'
 
+const auth = usePage().props.auth;
 const navigationItems = [
     { name: 'My orders', href: '/orders', icon: ShoppingCartIcon },
     { name: 'Reviews', href: '/reviews', icon: StarIcon },
-    { name: 'Delivery addresses', href: '/addresses', icon: HomeIcon },
+    { name: 'Delivery addresses', href: '/address', icon: HomeIcon },
     { name: 'Recently viewed', href: '/recently-viewed', icon: EyeIcon },
     { name: 'Favourite items', href: '/favourites', icon: HeartIcon },
     { name: 'Settings', href: '/settings', icon: Cog6ToothIcon },
 ]
 
 const user = {
-    name: 'Joseph McFall',
-    email: 'yourname@example.com',
+    name: auth.user.name,
+    email: auth.user.email,
     avatar: '/placeholder-user.jpg',
     address: 'Miles Drive, Newark, NJ 07103, California, United States of America',
     phone: '+1234 567 890 / +12 345 678',
