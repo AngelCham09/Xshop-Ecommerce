@@ -17,11 +17,11 @@
                     <dd
                         class="text-base font-medium text-gray-900 dark:text-white"
                     >
-                        $7,592.00
+                        ${{ total }}
                     </dd>
                 </dl>
 
-                <dl class="flex items-center justify-between gap-4">
+                <!-- <dl class="flex items-center justify-between gap-4">
                     <dt
                         class="text-base font-normal text-gray-500 dark:text-gray-400"
                     >
@@ -56,7 +56,7 @@
                     >
                         $799
                     </dd>
-                </dl>
+                </dl> -->
             </div>
 
             <dl
@@ -66,7 +66,7 @@
                     Total
                 </dt>
                 <dd class="text-base font-bold text-gray-900 dark:text-white">
-                    $8,191.00
+                    ${{ total }}
                 </dd>
             </dl>
         </div>
@@ -105,4 +105,46 @@
             </Link>
         </div>
     </div>
+
+    <div
+        class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6"
+    >
+        <form class="space-y-4">
+            <div>
+                <label
+                    for="voucher"
+                    class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                >
+                    Do you have a voucher or gift card?
+                </label>
+                <input
+                    type="text"
+                    id="voucher"
+                    class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                    placeholder=""
+                    required
+                />
+            </div>
+            <button
+                type="submit"
+                class="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium btn-primary"
+            >
+                Apply Code
+            </button>
+        </form>
+    </div>
 </template>
+
+<script setup>
+import { usePage, Link } from "@inertiajs/vue3";
+import { computed } from "vue";
+
+const props = defineProps({
+    type: {
+        type: String, // 'cart' | 'checkout'
+        default: "cart",
+        required: true,
+    },
+});
+const total = computed(() => usePage().props.cart.data.total);
+</script>

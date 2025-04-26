@@ -134,7 +134,7 @@
 
 <script setup>
 import { ref } from "vue";
-import UserLayouts from "./Layouts/UserLayouts.vue";
+import UserLayouts from "./Layouts/UserLayout.vue";
 
 const currentDate = new Date().toLocaleDateString("en-US", {
     year: "numeric",

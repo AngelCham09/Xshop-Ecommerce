@@ -1,5 +1,5 @@
 <script setup>
-import UserLayouts from "./Layouts/UserLayouts.vue";
+import UserLayouts from "./Layouts/UserLayout.vue";
 </script>
 <template>
     <UserLayouts>

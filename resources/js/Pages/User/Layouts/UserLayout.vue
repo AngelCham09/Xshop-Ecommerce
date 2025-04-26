@@ -2,9 +2,11 @@
     <!--header-->
     <Header />
 
+    <!-- Main content -->
+    <main>
+        <slot />
+    </main>
 
-    <!--product-->
-    <slot />
     <!--footer-->
     <Footer />
 </template>

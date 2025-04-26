@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Helper\Cart;
 use App\Http\Controllers\Controller;
 use App\Models\CartItem;
+use App\Models\DeliveryMethod;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Payment;
@@ -20,14 +21,33 @@ class CheckoutController extends Controller
 {
     public function view()
     {
-        return Inertia::render('User/Checkout');
+        $addresses = UserAddress::where('user_id', Auth::user()->id)->orderBy('isMain', 'desc')->get();
+        $deliveryMethods = DeliveryMethod::orderBy('id', 'asc')->get();
+
+
+        return Inertia::render('User/Checkout', [
+            'addresses' => $addresses,
+            'deliveryMethods' => $deliveryMethods,
+        ]);
     }
 
     public function store(Request $request)
     {
+        $request->validate([
+            'address' => 'required|exists:user_addresses,id',
+            'deliveryMethod' => 'required|exists:delivery_methods,id',
+            'carts' => 'required|array',
+            'products' => 'required|array',
+            'total' => 'required|numeric',
+        ]);
+
         $user = $request->user();
         $carts = $request->carts;
         $products = $request->products;
+        $address = $request->address;
+        $deliveryMethod = $request->deliveryMethod;
+
+        $deliveryFees = DeliveryMethod::where('id', $deliveryMethod)->first()->price;
 
         $mergedData = [];
 
@@ -65,6 +85,17 @@ class CheckoutController extends Controller
             ];
         }
 
+        $lineItems[] = [
+            'price_data' => [
+                'currency' => 'sgd',
+                'product_data' => [
+                    'name' => 'Delivery Fee',
+                ],
+                'unit_amount' => (int)($deliveryFees * 100),
+            ],
+            'quantity' => 1,
+        ];
+        
         $checkout_session = $stripe->checkout->sessions->create([
             'line_items' => $lineItems,
             'mode' => 'payment',
@@ -72,33 +103,14 @@ class CheckoutController extends Controller
             'cancel_url' => route('checkout.cancel'),
         ]);
 
-        $newAddress = $request->address;
-        if($newAddress['address'] != null){
-            $address = UserAddress::where('isMain', 1)->count();
-            if($address > 0 ){
-                $address = UserAddress::where('isMain', 1)->update(['isMain' => 0]);
-            }
-
-            $address = new UserAddress();
-            $address->address1 = $newAddress['address'];
-            $address->type = $newAddress['type'];
-            $address->city = $newAddress['city'];
-            $address->state = $newAddress['state'];
-            $address->postcode = $newAddress['postcode'];
-            $address->country_code = $newAddress['country'];
-            $address->user_id = Auth::user()->id;
-            $address->save();
-
-        }
-
-        $mainAddress = $user->user_address()->where('isMain', 1)->first();
-        if($mainAddress){
+        if($address){
             $order = new Order();
             $order->status = 'unpaid';
-            $order->total_price = $request->total;
+            $order->total_price = $request->total + $deliveryFees;
             $order->session_id = $checkout_session->id;
-            $order->user_address_id = $mainAddress->id;
+            $order->user_address_id = $address;
             $order->created_by = $user->id;
+            $order->delivery_method_id = $deliveryMethod;
             $order->save();
             $cartItems = CartItem::where('user_id', $user->id)->get();
             foreach($cartItems as $cartItem){

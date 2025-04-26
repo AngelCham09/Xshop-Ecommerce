@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-import UserLayouts from "./Layouts/UserLayouts.vue";
+import UserLayouts from "./Layouts/UserLayout.vue";
 import { Link, router } from "@inertiajs/vue3";
 import Hero from "./Layouts/Hero.vue";
 import ProductList from "./Components/ProductList.vue";
