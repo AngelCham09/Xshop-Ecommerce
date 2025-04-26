@@ -16,6 +16,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+//TODO: admin page, order details, order history page, cancel checkout
 Route::get('/', [ UserController::class, 'index'])->name('home');
 Route::get('/about', [ UserController::class, 'about'])->name('about');
 Route::get('/contact', [UserController::class, 'contact'])->name('contact');
