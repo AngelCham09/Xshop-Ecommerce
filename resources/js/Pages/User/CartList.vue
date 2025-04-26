@@ -151,10 +151,12 @@
                         </tbody>
                     </table>
                 </div>
+
                 <div
                     class="mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full"
                 >
-                    <div
+                    <OrderSummary/>
+                    <!-- <div
                         class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6"
                     >
                         <p
@@ -176,54 +178,10 @@
                                     <dd
                                         class="text-base font-medium text-gray-900 dark:text-white"
                                     >
-                                        $7,592.00
+                                        ${{total}}
                                     </dd>
                                 </dl>
 
-                                <dl
-                                    class="flex items-center justify-between gap-4"
-                                >
-                                    <dt
-                                        class="text-base font-normal text-gray-500 dark:text-gray-400"
-                                    >
-                                        Savings
-                                    </dt>
-                                    <dd
-                                        class="text-base font-medium text-green-600"
-                                    >
-                                        -$299.00
-                                    </dd>
-                                </dl>
-
-                                <dl
-                                    class="flex items-center justify-between gap-4"
-                                >
-                                    <dt
-                                        class="text-base font-normal text-gray-500 dark:text-gray-400"
-                                    >
-                                        Store Pickup
-                                    </dt>
-                                    <dd
-                                        class="text-base font-medium text-gray-900 dark:text-white"
-                                    >
-                                        $99
-                                    </dd>
-                                </dl>
-
-                                <dl
-                                    class="flex items-center justify-between gap-4"
-                                >
-                                    <dt
-                                        class="text-base font-normal text-gray-500 dark:text-gray-400"
-                                    >
-                                        Tax
-                                    </dt>
-                                    <dd
-                                        class="text-base font-medium text-gray-900 dark:text-white"
-                                    >
-                                        $799
-                                    </dd>
-                                </dl>
                             </div>
 
                             <dl
@@ -237,7 +195,7 @@
                                 <dd
                                     class="text-base font-bold text-gray-900 dark:text-white"
                                 >
-                                    $8,191.00
+                                    ${{ total }}
                                 </dd>
                             </dl>
                         </div>
@@ -277,7 +235,7 @@
                                 </svg>
                             </Link>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- <div
                         class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6"
@@ -491,15 +449,4 @@ const remove = (product) => {
     router.delete(route("cart.delete", product));
 };
 
-const submit = () => {
-    router.visit(route("checkout.store"), {
-        method: "post",
-        data: {
-            carts: carts.value,
-            products: products.value,
-            total: total.value,
-            address: form,
-        },
-    });
-};
 </script>

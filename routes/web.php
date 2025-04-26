@@ -36,8 +36,8 @@ Route::middleware('auth')->group(function () {
     //Address
     Route::prefix('address')->controller(UserAddressController::class)->group(function () {
         Route::get('/', 'index')->name('address.index');
-        // Route::post('store', 'addressStore')->name('address.store');
-        // Route::patch('update/{id}', 'addressUpdate')->name('address.update');
+        Route::post('store', 'store')->name('address.store');
+        Route::patch('update/{id}', 'update')->name('address.update');
         Route::delete('delete/{id}', 'delete')->name('address.delete');
     });
 

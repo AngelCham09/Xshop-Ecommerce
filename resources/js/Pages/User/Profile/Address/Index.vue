@@ -28,8 +28,10 @@ const fetchCountries = async () => {
 };
 
 const showAddingAddressModal = ref(false);
+const showEditingAddressModal = ref(false);
 const addressForm = useForm({
-    addressType: "",
+    id: null,
+    type: "",
     address1: "",
     address2: "",
     city: "",
@@ -43,15 +45,52 @@ const addingAddress = () => {
     showAddingAddressModal.value = true;
 };
 
+const editingAddress = (address) => {
+    addressForm.id = address.id;
+    addressForm.type = address.type;
+    addressForm.address1 = address.address1;
+    addressForm.address2 = address.address2;
+    addressForm.city = address.city;
+    addressForm.state = address.state;
+    addressForm.postcode = address.postcode;
+    const matchedCountry = countries.value.find(
+        (country) => country.code === address.country_code
+    );
+    addressForm.country = matchedCountry ? matchedCountry : "";
+    addressForm.isMain = address.isMain ? true : false;
+    showEditingAddressModal.value = true;
+};
+
 const closeModal = () => {
     showAddingAddressModal.value = false;
-    form.clearErrors();
-    form.reset();
+    showEditingAddressModal.value = false;
+    addressForm.clearErrors();
     addressForm.reset();
 };
 
 const addAddress = () => {
-    console.log("Add new address");
+    addressForm.post(route("address.store"), {
+        onSuccess: () => {
+            Swal.fire({
+                toast: true,
+                icon: "success",
+                position: "top-end",
+                showConfirmButton: false,
+                title: "Address added successfully",
+            });
+            closeModal();
+        },
+        onError: (errors) => {
+            addressForm.errors = errors;
+            Swal.fire({
+                toast: true,
+                icon: "error",
+                position: "top-end",
+                showConfirmButton: false,
+                title: "Failed to add address",
+            });
+        },
+    });
 };
 
 const deleteAddress = (id) => {
@@ -78,7 +117,28 @@ const deleteAddress = (id) => {
 };
 
 const editAddress = (id) => {
-    console.log("Edit address with ID:", id);
+    addressForm.patch(route("address.update", id), {
+        onSuccess: () => {
+            Swal.fire({
+                toast: true,
+                icon: "success",
+                position: "top-end",
+                showConfirmButton: false,
+                title: "Address updated successfully",
+            });
+            closeModal();
+        },
+        onError: (errors) => {
+            addressForm.errors = errors;
+            Swal.fire({
+                toast: true,
+                icon: "error",
+                position: "top-end",
+                showConfirmButton: false,
+                title: "Failed to update address",
+            });
+        },
+    });
 };
 
 onMounted(() => {
@@ -130,7 +190,7 @@ onMounted(() => {
                     </div>
                     <div class="flex space-x-2">
                         <button
-                            @click="editAddress(address.id)"
+                            @click="editingAddress(address)"
                             class="btn-secondary"
                         >
                             Edit
@@ -151,7 +211,7 @@ onMounted(() => {
         </section>
     </ProfileLayout>
 
-    <Modal :show="showAddingAddressModal" @close="closeModal">
+    <Modal :show="showAddingAddressModal || showEditingAddressModal" @close="closeModal">
         <div class="p-6">
             <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
                 Add New Address
@@ -162,10 +222,15 @@ onMounted(() => {
                     >Address Type</label
                 >
                 <input
-                    v-model="addressForm.addressType"
+                    v-model="addressForm.type"
                     type="text"
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                 />
+                <p class="text-sm text-red-500 mt-1">
+                    <span v-if="addressForm.errors.type">
+                        {{ addressForm.errors.type }}
+                    </span>
+                </p>
 
                 <label class="block text-sm text-gray-500 mt-4 mb-1"
                     >Address 1</label
@@ -175,6 +240,11 @@ onMounted(() => {
                     type="text"
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                 />
+                <p class="text-sm text-red-500 mt-1">
+                    <span v-if="addressForm.errors.address1">
+                        {{ addressForm.errors.address1 }}
+                    </span>
+                </p>
 
                 <label class="block text-sm text-gray-500 mt-4 mb-1"
                     >Address 2</label
@@ -184,6 +254,11 @@ onMounted(() => {
                     type="text"
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                 />
+                <p class="text-sm text-red-500 mt-1">
+                    <span v-if="addressForm.errors.address2">
+                        {{ addressForm.errors.address2 }}
+                    </span>
+                </p>
 
                 <label class="block text-sm text-gray-500 mt-4 mb-1"
                     >City</label
@@ -193,6 +268,11 @@ onMounted(() => {
                     type="text"
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                 />
+                <p class="text-sm text-red-500 mt-1">
+                    <span v-if="addressForm.errors.city">
+                        {{ addressForm.errors.city }}
+                    </span>
+                </p>
 
                 <label class="block text-sm text-gray-500 mt-4 mb-1"
                     >State</label
@@ -202,6 +282,11 @@ onMounted(() => {
                     type="text"
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                 />
+                <p class="text-sm text-red-500 mt-1">
+                    <span v-if="addressForm.errors.state">
+                        {{ addressForm.errors.state }}
+                    </span>
+                </p>
 
                 <label class="block text-sm text-gray-500 mt-4 mb-1"
                     >Postcode</label
@@ -211,6 +296,11 @@ onMounted(() => {
                     type="text"
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                 />
+                <p class="text-sm text-red-500 mt-1">
+                    <span v-if="addressForm.errors.postcode">
+                        {{ addressForm.errors.postcode }}
+                    </span>
+                </p>
 
                 <label class="block text-sm text-gray-500 mt-4 mb-1"
                     >Country</label
@@ -228,6 +318,11 @@ onMounted(() => {
                         {{ country.name }} ({{ country.code }})
                     </option>
                 </select>
+                <p class="text-sm text-red-500 mt-1">
+                    <span v-if="addressForm.errors.country_code">
+                        {{ addressForm.errors.country_code }}
+                    </span>
+                </p>
 
                 <div class="mt-4 flex items-center">
                     <input
@@ -239,6 +334,11 @@ onMounted(() => {
                     <label for="isMain" class="text-sm text-gray-500"
                         >Set as Main Address</label
                     >
+                    <p class="text-sm text-red-500 mt-1">
+                        <span v-if="addressForm.errors.isMain">
+                            {{ addressForm.errors.isMain }}
+                        </span>
+                    </p>
                 </div>
             </div>
 
@@ -248,7 +348,7 @@ onMounted(() => {
                 </button>
 
                 <button
-                    @click="addAddress"
+                    @click="showAddingAddressModal ? addAddress() : editAddress(addressForm.id)"
                     :disabled="addressForm.processing"
                     class="btn-primary ms-3"
                     :class="{ 'opacity-25': addressForm.processing }"

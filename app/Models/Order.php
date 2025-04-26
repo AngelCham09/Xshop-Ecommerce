@@ -16,6 +16,7 @@ class Order extends Model
         'user_address_id',
         'created_by',
         'updated_by',
+        'delivery_method_id',
     ];
 
     function order_items()
@@ -26,5 +27,15 @@ class Order extends Model
     public function payment()
     {
         return $this->hasOne(Payment::class);
+    }
+
+    function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    function delivery_method()
+    {
+        return $this->belongsTo(DeliveryMethod::class);
     }
 }
