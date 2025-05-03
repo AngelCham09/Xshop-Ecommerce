@@ -14,9 +14,24 @@ use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with(['brand', 'category', 'product_images'])->get();
+        $query = Product::with(['brand', 'category', 'product_images']);
+
+        // Apply filters
+        if ($request->has('inStock')) {
+            $query->where('inStock', $request->inStock);
+        }
+
+        if ($request->has('published')) {
+            $query->where('published', $request->published);
+        }
+
+        if ($request->has('search')) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        $products = $query->paginate(10);
         $brands = Brand::get();
         $categories = Category::get();
 
@@ -40,6 +55,8 @@ class ProductController extends Controller
             'product_images.*' => ['nullable', File::types(['png', 'jpg', 'webp'])],
         ]);
 
+        $attributes['created_by'] = auth()->user()->id;
+        $attributes['inStock'] = 1;
         $product = Product::create(
             $attributes
         );
@@ -86,6 +103,7 @@ class ProductController extends Controller
             'product_images.*' => ['nullable', File::types(['png', 'jpg', 'webp'])],
         ]);
 
+        $attributes['updated_by'] = auth()->user()->id;
         if ($request->has('product_images')) {
 
             $productImages = $request->file('product_images');
@@ -110,7 +128,35 @@ class ProductController extends Controller
 
     public function destroy($id)
     {
-        $product = Product::findOrFail($id)->delete();
+        $product = Product::findOrFail($id);
+        $product->deleted_by = auth()->user()->id;
+        $product->save();
+        $product->delete();
+
         return redirect()->back()->with('success', 'Product deleted successfully');
+    }
+
+    public function updateStockStatus(Request $request, $id)
+    {
+        $request->validate([
+            'inStock' => 'required|boolean',
+        ]);
+        $product = Product::findOrFail($id);
+        $product->inStock = $request->inStock;
+        $product->save();
+
+        return redirect()->back()->with('success', 'Product stock status updated successfully');
+    }
+
+    public function updatePublishedStatus(Request $request, $id)
+    {
+        $request->validate([
+            'published' => 'required|boolean',
+        ]);
+        $product = Product::findOrFail($id);
+        $product->published = $request->published;
+        $product->save();
+
+        return redirect()->back()->with('success', 'Product published status updated successfully');
     }
 }

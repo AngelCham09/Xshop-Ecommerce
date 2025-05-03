@@ -9,7 +9,10 @@
                     class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4"
                 >
                     <div class="w-full md:w-1/2">
-                        <form class="flex items-center">
+                        <form
+                            @submit.prevent="applyFilters"
+                            class="flex items-center"
+                        >
                             <label for="simple-search" class="sr-only"
                                 >Search</label
                             >
@@ -33,10 +36,10 @@
                                 </div>
                                 <input
                                     type="text"
+                                    v-model="filters.search"
                                     id="simple-search"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Search"
-                                    required=""
+                                    placeholder="Search product name"
                                 />
                             </div>
                         </form>
@@ -47,22 +50,10 @@
                         <button
                             type="button"
                             @click="openProductModal(true)"
-                            class="flex items-center justify-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+                            class="flex items-center gap-2 justify-center btn-primary"
                         >
-                            <svg
-                                class="h-3.5 w-3.5 mr-2"
-                                fill="currentColor"
-                                viewbox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    clip-rule="evenodd"
-                                    fill-rule="evenodd"
-                                    d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                                />
-                            </svg>
-                            Add product
+                            <Icon icon="lucide:plus" width="16" height="16" />
+                            <span class="font-semibold">Add Product</span>
                         </button>
                         <div
                             class="flex items-center space-x-3 w-full md:w-auto"
@@ -150,81 +141,31 @@
                                 id="filterDropdown"
                                 class="z-10 hidden w-48 p-3 bg-white rounded-lg shadow dark:bg-gray-700"
                             >
-                                <h6
-                                    class="mb-3 text-sm font-medium text-gray-900 dark:text-white"
+                                <div
+                                    class="flex flex-col gap-2 items-center w-full md:w-auto"
                                 >
-                                    Choose brand
-                                </h6>
-                                <ul
-                                    class="space-y-2 text-sm"
-                                    aria-labelledby="filterDropdownButton"
-                                >
-                                    <li class="flex items-center">
-                                        <input
-                                            id="apple"
-                                            type="checkbox"
-                                            value=""
-                                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                                        />
-                                        <label
-                                            for="apple"
-                                            class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-                                            >Apple (56)</label
-                                        >
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input
-                                            id="fitbit"
-                                            type="checkbox"
-                                            value=""
-                                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                                        />
-                                        <label
-                                            for="fitbit"
-                                            class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-                                            >Microsoft (16)</label
-                                        >
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input
-                                            id="razor"
-                                            type="checkbox"
-                                            value=""
-                                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                                        />
-                                        <label
-                                            for="razor"
-                                            class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-                                            >Razor (49)</label
-                                        >
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input
-                                            id="nikon"
-                                            type="checkbox"
-                                            value=""
-                                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                                        />
-                                        <label
-                                            for="nikon"
-                                            class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-                                            >Nikon (12)</label
-                                        >
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input
-                                            id="benq"
-                                            type="checkbox"
-                                            value=""
-                                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                                        />
-                                        <label
-                                            for="benq"
-                                            class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-                                            >BenQ (74)</label
-                                        >
-                                    </li>
-                                </ul>
+                                    <!-- Filter In Stock -->
+                                    <select
+                                        v-model="filters.inStock"
+                                        @change="applyFilters"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    >
+                                        <option value="">All Stock</option>
+                                        <option value="1">In Stock</option>
+                                        <option value="0">Out of Stock</option>
+                                    </select>
+
+                                    <!-- Filter Published -->
+                                    <select
+                                        v-model="filters.published"
+                                        @change="applyFilters"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    >
+                                        <option value="">All Published</option>
+                                        <option value="1">Published</option>
+                                        <option value="0">Unpublished</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -252,7 +193,7 @@
                         </thead>
                         <tbody>
                             <tr
-                                v-for="product in products"
+                                v-for="product in products.data"
                                 :key="product.id"
                                 class="border-b dark:border-gray-700"
                             >
@@ -270,36 +211,56 @@
                                 </td>
                                 <td class="px-4 py-3">{{ product.price }}</td>
                                 <td class="px-4 py-3">
-                                    <span
-                                        v-if="product.inStock == 0"
-                                        class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"
-                                        >InStock</span
+                                    <label
+                                        class="inline-flex relative items-center cursor-pointer"
                                     >
-                                    <span
-                                        v-else
-                                        class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300"
-                                        >Out of stock</span
-                                    >
+                                        <input
+                                            type="checkbox"
+                                            class="sr-only peer"
+                                            :checked="product.inStock == 1"
+                                            @change="toggleStockStatus(product)"
+                                        />
+                                        <div
+                                            class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"
+                                        ></div>
+                                        <span
+                                            class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                        >
+                                            {{
+                                                product.inStock == 1
+                                                    ? "In Stock"
+                                                    : "Out of Stock"
+                                            }}
+                                        </span>
+                                    </label>
                                 </td>
                                 <td class="px-4 py-3">
-                                    <button
-                                        v-if="product.published == 0"
-                                        type="button"
-                                        class="px-3 py-2 text-xs font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                                    <label
+                                        class="inline-flex relative items-center cursor-pointer"
                                     >
-                                        Published
-                                    </button>
-                                    <button
-                                        v-else
-                                        type="button"
-                                        class="px-3 py-2 text-xs font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
-                                    >
-                                        Unpublished
-                                    </button>
+                                        <input
+                                            type="checkbox"
+                                            class="sr-only peer"
+                                            :checked="product.published == 1"
+                                            @change="
+                                                togglePublishedStatus(product)
+                                            "
+                                        />
+                                        <div
+                                            class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"
+                                        ></div>
+                                        <span
+                                            class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                        >
+                                            {{
+                                                product.published == 1
+                                                    ? "Published"
+                                                    : "Unpublished"
+                                            }}
+                                        </span>
+                                    </label>
                                 </td>
-                                <td
-                                    class="px-4 py-3 flex items-center justify-end"
-                                >
+                                <td class="px-4 py-3">
                                     <button
                                         :id="'dropdown-button-' + product.id"
                                         :data-dropdown-toggle="
@@ -363,105 +324,9 @@
                         </tbody>
                     </table>
                 </div>
-                <nav
-                    class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4"
-                    aria-label="Table navigation"
-                >
-                    <span
-                        class="text-sm font-normal text-gray-500 dark:text-gray-400"
-                    >
-                        Showing
-                        <span
-                            class="font-semibold text-gray-900 dark:text-white"
-                            >1-10</span
-                        >
-                        of
-                        <span
-                            class="font-semibold text-gray-900 dark:text-white"
-                            >1000</span
-                        >
-                    </span>
-                    <ul class="inline-flex items-stretch -space-x-px">
-                        <li>
-                            <a
-                                href="#"
-                                class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                            >
-                                <span class="sr-only">Previous</span>
-                                <svg
-                                    class="w-5 h-5"
-                                    aria-hidden="true"
-                                    fill="currentColor"
-                                    viewbox="0 0 20 20"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                href="#"
-                                class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                                >1</a
-                            >
-                        </li>
-                        <li>
-                            <a
-                                href="#"
-                                class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                                >2</a
-                            >
-                        </li>
-                        <li>
-                            <a
-                                href="#"
-                                aria-current="page"
-                                class="flex items-center justify-center text-sm z-10 py-2 px-3 leading-tight text-primary-600 bg-primary-50 border border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-                                >3</a
-                            >
-                        </li>
-                        <li>
-                            <a
-                                href="#"
-                                class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                                >...</a
-                            >
-                        </li>
-                        <li>
-                            <a
-                                href="#"
-                                class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                                >100</a
-                            >
-                        </li>
-                        <li>
-                            <a
-                                href="#"
-                                class="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                            >
-                                <span class="sr-only">Next</span>
-                                <svg
-                                    class="w-5 h-5"
-                                    aria-hidden="true"
-                                    fill="currentColor"
-                                    viewbox="0 0 20 20"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+                <div class="m-4">
+                    <Pagination :elements="products"></Pagination>
+                </div>
             </div>
         </div>
     </section>
@@ -521,11 +386,7 @@
 
                 <!-- Modal body -->
                 <div class="p-4 md:p-5 overflow-y-auto flex-grow">
-                    <form
-                        @submit.prevent="
-                            isEdit ? updateProduct() : submitProduct()
-                        "
-                    >
+                    <form @submit.prevent="submitProduct()">
                         <div class="grid gap-4 mb-4 grid-cols-2">
                             <div class="col-span-2">
                                 <label
@@ -632,66 +493,66 @@
                                     placeholder="Write product description here"
                                 ></textarea>
                             </div>
+
                             <div class="col-span-2">
                                 <label
                                     for="photo"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                    >Product Image</label
                                 >
-                                <el-upload
-                                    v-model:file-list="productImages"
-                                    list-type="picture-card"
+                                    Product Image
+                                </label>
+                                <input
+                                    type="file"
+                                    id="photo"
                                     multiple
-                                    :on-preview="handlePictureCardPreview"
-                                    :on-remove="handleRemove"
-                                    :on-change="handleFileChange"
-                                    :auto-upload="false"
-                                >
-                                    <el-icon><Plus /></el-icon>
-                                </el-upload>
+                                    accept="image/*"
+                                    @change="handleFileChange"
+                                    class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                                />
 
-                                <el-dialog v-model="dialogVisible">
-                                    <img
-                                        w-full
-                                        :src="dialogImageUrl"
-                                        alt="Preview Image"
-                                    />
-                                </el-dialog>
-                            </div>
-
-                            <div class="col-span-2">
-                                <div class="flex flex-nowrap mb-8">
+                                <!-- Preview Existing Images -->
+                                <div class="flex flex-wrap mt-4 gap-4">
                                     <div
-                                        v-if="
-                                            productData.product_images &&
-                                            productData.product_images.length >
-                                                0
-                                        "
                                         v-for="(
-                                            pimage, index
+                                            image, index
                                         ) in productData.product_images"
-                                        :key="pimage.id"
-                                        class="relative me-2"
+                                        :key="`existing-${index}`"
+                                        class="relative w-32 h-32"
                                     >
-                                        <!-- Product Image -->
                                         <img
-                                            class="w-32 h-32 rounded"
-                                            :src="'/storage/' + pimage.image"
-                                            alt="Product Image"
+                                            :src="`/storage/${image.image}`"
+                                            alt="Existing Product Image"
+                                            class="w-full h-full object-cover rounded-lg"
                                         />
-
-                                        <!-- Red Circle for additional icon/indicator -->
-                                        <span
-                                            class="absolute top-0 right-0 transform -translate-y-1/2 w-3.5 h-3.5 bg-red-400 border-2 border-white dark:border-gray-800 rounded-full"
+                                        <button
+                                            @click="deleteImage(image, index)"
+                                            type="button"
+                                            class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
                                         >
-                                            <span
-                                                @click="
-                                                    deleteImage(pimage, index)
-                                                "
-                                                class="text-white text-xs font-bold absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
-                                                >x</span
-                                            >
-                                        </span>
+                                            x
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Preview New Images -->
+                                <div class="flex flex-wrap mt-4 gap-4">
+                                    <div
+                                        v-for="(image, index) in productImages"
+                                        :key="`new-${index}`"
+                                        class="relative w-32 h-32"
+                                    >
+                                        <img
+                                            :src="image.preview"
+                                            alt="New Product Image"
+                                            class="w-full h-full object-cover rounded-lg"
+                                        />
+                                        <button
+                                            @click="removeImage(index)"
+                                            type="button"
+                                            class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+                                        >
+                                            x
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -713,10 +574,11 @@
 import { usePage, useForm } from "@inertiajs/vue3";
 import { ref, onMounted } from "vue";
 import { router } from "@inertiajs/vue3";
-import { Plus } from "@element-plus/icons-vue";
+import { Icon } from "@iconify/vue";
+import Pagination from "./Pagination.vue";
 
-defineProps({
-    products: Array,
+const props = defineProps({
+    products: Object,
 });
 const brands = usePage().props.brands;
 const categories = usePage().props.categories;
@@ -739,19 +601,23 @@ const productData = ref({
 //Image
 const productImages = ref([]);
 const dialogImageUrl = ref("");
-const dialogVisible = ref(false);
 
-const handleFileChange = (file) => {
-    productImages.value.push(file);
+const handleFileChange = (event) => {
+    const files = event.target.files;
+    for (const file of files) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            productImages.value.push({
+                file: file,
+                preview: e.target.result,
+            });
+        };
+        reader.readAsDataURL(file);
+    }
 };
 
-const handlePictureCardPreview = (file) => {
-    dialogImageUrl.value = file.url;
-    dialogVisible.value = true;
-};
-
-const handleRemove = (file) => {
-    console.log(file);
+const removeImage = (index) => {
+    productImages.value.splice(index, 1);
 };
 
 //Submit product
@@ -768,11 +634,15 @@ const submitProduct = async () => {
 
     // Append product_images separately as an array of raw image files
     for (const image of productImages.value) {
-        formData.append("product_images[]", image.raw);
+        formData.append("product_images[]", image.file);
     }
 
     try {
-        await router.post("products/store", formData, {
+        const url = productData.value.id
+            ? `/admin/products/update/${productData.value.id}`
+            : "/admin/products/store";
+
+        await router.post(url, formData, {
             onSuccess: (page) => {
                 Swal.fire({
                     toast: true,
@@ -844,40 +714,6 @@ const deleteImage = async (pimage, index) => {
     }
 };
 
-const updateProduct = async () => {
-    const formData = new FormData();
-
-    // Append the non-array properties from productData
-    for (const [key, value] of Object.entries(productData.value)) {
-        // Skip the product_images array (we'll handle it separately)
-        if (key !== "product_images") {
-            formData.append(key, value);
-        }
-    }
-
-    // Append product_images separately as an array of raw image files
-    for (const image of productImages.value) {
-        formData.append("product_images[]", image.raw);
-    }
-
-    try {
-        await router.post("products/update/" + productData.value.id, formData, {
-            onSuccess: (page) => {
-                Swal.fire({
-                    toast: true,
-                    icon: "success",
-                    position: "top-end",
-                    showConfirmButton: false,
-                    title: page.props.flash.success,
-                });
-                productModal.value = false;
-            },
-        });
-    } catch (err) {
-        console.log(err);
-    }
-};
-
 const deleteProduct = (product, index) => {
     Swal.fire({
         title: "Are you sure ?",
@@ -905,6 +741,100 @@ const deleteProduct = (product, index) => {
                 console.log(err);
             }
         }
+    });
+};
+
+//Update inStock
+const toggleStockStatus = async (product) => {
+    try {
+        const newStatus = product.inStock == 1 ? 0 : 1; // Toggle the stock status
+        await router.put(`/admin/products/update/in-stock/${product.id}`, {
+            inStock: newStatus,
+        });
+
+        // Update the product's stock status locally
+        product.inStock = newStatus;
+
+        Swal.fire({
+            toast: true,
+            icon: "success",
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 1500,
+            title: `Product is now ${
+                newStatus == 1 ? "In Stock" : "Out of Stock"
+            }`,
+        });
+    } catch (error) {
+        console.error("Error toggling stock status:", error);
+        Swal.fire({
+            toast: true,
+            icon: "error",
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 1500,
+            title: "Failed to update stock status",
+        });
+    }
+};
+
+//Update published status
+const togglePublishedStatus = async (product) => {
+    try {
+        const newStatus = product.published == 1 ? 0 : 1;
+        await router.put(`/admin/products/update/published/${product.id}`, {
+            published: newStatus,
+        });
+
+        product.published = newStatus;
+
+        Swal.fire({
+            toast: true,
+            icon: "success",
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 1500,
+            title: `Product is now ${
+                newStatus == 1 ? "Published" : "Unpublished"
+            }`,
+        });
+    } catch (error) {
+        console.error("Error toggling published status:", error);
+        Swal.fire({
+            toast: true,
+            icon: "error",
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 1500,
+            title: "Failed to update published status",
+        });
+    }
+};
+
+const filters = ref({
+    inStock: "", // Filter for in stock (1 or 0)
+    published: "", // Filter for published (1 or 0)
+    search: "",
+});
+
+const applyFilters = () => {
+    const query = {
+        inStock: filters.value.inStock,
+        published: filters.value.published,
+        search: filters.value.search,
+    };
+
+    // Remove empty filters from the query
+    Object.keys(query).forEach((key) => {
+        if (query[key] === "") {
+            delete query[key];
+        }
+    });
+
+    // Use Inertia.js to update the product list with filters
+    router.get("/admin/products", query, {
+        preserveState: true, // Preserve the current state
+        preserveScroll: true, // Preserve the scroll position
     });
 };
 </script>
