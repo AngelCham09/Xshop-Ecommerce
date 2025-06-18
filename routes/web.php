@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\CartController;
 use App\Http\Controllers\User\CheckoutController;
@@ -97,6 +99,17 @@ Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->group(func
 
     Route::put('products/update/in-stock/{id}', [ProductController::class, 'updateStockStatus'])->name('admin.products.update.stock.status');
     Route::put('products/update/published/{id}', [ProductController::class, 'updatePublishedStatus'])->name('admin.products.update.published.status');
+
+
+    //Brand
+    Route::get('/brands', [BrandController::class, 'index'])->name('admin.brands.index');
+    Route::post('/brands/store', [BrandController::class, 'store'])->name('admin.brands.store');
+    Route::post('brands/update/{id}', [BrandController::class, 'update'])->name('admin.brands.update');
+
+    //Categories
+    Route::get('/categories', [CategoryController::class, 'index'])->name('admin.categories.index');
+    Route::post('/categories/store', [CategoryController::class, 'store'])->name('admin.categories.store');
+    Route::post('categories/update/{id}', [CategoryController::class, 'update'])->name('admin.categories.update');
 });
 
 
