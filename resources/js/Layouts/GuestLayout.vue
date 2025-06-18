@@ -15,8 +15,8 @@ import { Link } from "@inertiajs/vue3";
             <div class="md:block hidden w-1/2 h-full">
                 <img
                     class="rounded-2xl h-full object-cover"
-                    src="images/login.jpg"
-                    alt=""
+                    src="/images/login.jpg"
+                    alt="Login Image"
                 />
             </div>
         </div>

@@ -94,6 +94,9 @@ Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->group(func
     Route::post('products/update/{id}', [ProductController::class, 'update'])->name('admin.products.update');
     Route::delete('/products/image/{id}', [ProductController::class, 'deleteImage'])->name('admin.products.image.delete');
     Route::delete('/products/destroy/{id}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
+
+    Route::put('products/update/in-stock/{id}', [ProductController::class, 'updateStockStatus'])->name('admin.products.update.stock.status');
+    Route::put('products/update/published/{id}', [ProductController::class, 'updatePublishedStatus'])->name('admin.products.update.published.status');
 });
 
 
