@@ -8,9 +8,10 @@ defineProps({
     }
 });
 
-const addToCart = (product) => {
-    router.post(route("cart.store", product), {
+const addToCart = (productId) => {
+    router.post(`/cart/store/${productId}`, {}, {
         onSuccess: (page) => {
+            console.log('Inertia page:', page);
             Swal.fire({
                 toast: true,
                 icon: "success",
@@ -18,8 +19,9 @@ const addToCart = (product) => {
                 showConfirmButton: false,
                 title: page.props.flash.success,
             });
-            productModal.value = false;
         },
+        preserveScroll: true,
+        preserveState: true,
     });
 };
 </script>
@@ -271,7 +273,7 @@ const addToCart = (product) => {
                     </p>
 
                     <button
-                        @click="addToCart(product)"
+                        @click="addToCart(product.id)"
                         type="button"
                         class="inline-flex items-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium btn-primary"
                     >
