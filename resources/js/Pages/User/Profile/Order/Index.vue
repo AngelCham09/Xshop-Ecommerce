@@ -134,11 +134,7 @@ const props = defineProps({
                         >
                             Show Invoice
                         </button>
-                        <button
-                            class="btn-primary"
-                        >
-                            Buy Now
-                        </button>
+                        <button class="btn-primary">Buy Now</button>
                     </div>
                 </div>
                 <svg
@@ -153,14 +149,21 @@ const props = defineProps({
                 </svg>
 
                 <div
-                v-for="item in order.order_items"
-                :key="item.id"
+                    v-for="item in order.order_items"
+                    :key="item.id"
                     class="flex max-lg:flex-col items-center gap-8 lg:gap-24 px-3 md:px-11"
                 >
                     <div class="grid grid-cols-4 w-full">
                         <div class="col-span-4 sm:col-span-1">
                             <img
-                                src="https://pagedone.io/asset/uploads/1705474774.png"
+                                v-if="item.product.product_images.length > 0"
+                                :src="`/storage/${item.product.product_images[0].image}`"
+                                alt=""
+                                class="max-sm:mx-auto object-cover"
+                            />
+                            <img
+                                v-else
+                                src="https://media.istockphoto.com/id/1409329028/vector/no-picture-available-placeholder-thumbnail-icon-illustration-design.jpg?s=612x612&w=0&k=20&c=_zOuJu755g2eEUioiOUdz_mHKJQJn-tDgIAhQzyeKUQ="
                                 alt=""
                                 class="max-sm:mx-auto object-cover"
                             />
@@ -210,7 +213,11 @@ const props = defineProps({
                             </p>
                             <p
                                 class="font-semibold text-lg leading-8 text-left whitespace-nowrap"
-                                :class="order.status === 'PAID' ? 'text-green-500' : 'text-red-500'"
+                                :class="
+                                    order.status === 'PAID'
+                                        ? 'text-green-500'
+                                        : 'text-red-500'
+                                "
                             >
                                 {{ order.status }}
                             </p>
@@ -245,7 +252,10 @@ const props = defineProps({
                 <div
                     class="px-3 md:px-11 flex items-center justify-between max-sm:flex-col-reverse"
                 >
-                    <div v-if="order.status == 'PAID'" class="flex max-sm:flex-col-reverse items-center">
+                    <div
+                        v-if="order.status == 'PAID'"
+                        class="flex max-sm:flex-col-reverse items-center"
+                    >
                         <button
                             class="flex items-center gap-3 py-10 pr-8 sm:border-r border-gray-300 font-normal text-xl leading-8 text-gray-500 group transition-all duration-500 hover:text-indigo-600"
                         >
@@ -273,7 +283,10 @@ const props = defineProps({
                             Payment Is Succesfull
                         </p>
                     </div>
-                    <div v-else class="flex max-sm:flex-col-reverse items-center">
+                    <div
+                        v-else
+                        class="flex max-sm:flex-col-reverse items-center"
+                    >
                         <!-- <button
                             class="flex items-center gap-3 py-10 pr-8 sm:border-r border-gray-300 font-normal text-xl leading-8 text-gray-500 group transition-all duration-500 hover:text-indigo-600"
                         >
@@ -296,7 +309,7 @@ const props = defineProps({
                             cancel order
                         </button> -->
                         <p
-                            class=" flex items-center gap-3 py-10 pr-8 font-normal text-xl leading-8 text-gray-500"
+                            class="flex items-center gap-3 py-10 pr-8 font-normal text-xl leading-8 text-gray-500"
                         >
                             Payment Is Not Succesfull
                         </p>

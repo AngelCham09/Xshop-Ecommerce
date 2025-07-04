@@ -174,7 +174,7 @@ class CheckoutController extends Controller
                 ]);
             }
 
-            return redirect()->route('home');
+            return redirect()->route('order.index');
 
         }catch(\Exception $e){
             throw new NotFoundHttpException();

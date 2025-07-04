@@ -14,7 +14,7 @@
                     <div class="bg-white rounded-lg shadow-sm p-4 mb-4 border border-gray-100">
                         <div class="flex items-start justify-between">
                             <div class="flex items-center space-x-3">
-                                <img :src="user.avatar" alt="Profile" class="w-10 h-10 rounded-full">
+                                <img src="https://freesvg.org/img/abstract-user-flat-4.png" alt="Profile" class="w-10 h-10 rounded-full">
                                 <div>
                                     <h2 class="font-semibold text-gray-900">{{ user.name }}</h2>
                                     <p class="text-sm text-gray-500">{{ user.email }}</p>
