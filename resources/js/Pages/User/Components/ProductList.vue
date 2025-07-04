@@ -10,16 +10,6 @@ defineProps({
 
 const addToCart = (productId) => {
     router.post(`/cart/store/${productId}`, {}, {
-        onSuccess: (page) => {
-            console.log('Inertia page:', page);
-            Swal.fire({
-                toast: true,
-                icon: "success",
-                position: "top-end",
-                showConfirmButton: false,
-                title: page.props.flash.success,
-            });
-        },
         preserveScroll: true,
         preserveState: true,
     });
@@ -36,7 +26,7 @@ const addToCart = (productId) => {
             class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
         >
             <div class="h-56 w-full">
-                <a href="#">
+                <a :href="`/products/${product.id}`">
                     <img
                         v-if="product.product_images.length > 0"
                         :src="'/storage/' + product.product_images[0].image"

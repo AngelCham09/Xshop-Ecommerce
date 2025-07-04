@@ -9,6 +9,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\CartController;
 use App\Http\Controllers\User\CheckoutController;
 use App\Http\Controllers\User\DashboardController;
+use App\Http\Controllers\User\OrderController;
 use App\Http\Controllers\User\ProductListController;
 use App\Http\Controllers\User\UserAddressController;
 use App\Http\Controllers\User\UserController;
@@ -25,7 +26,6 @@ Route::get('/contact', [UserController::class, 'contact'])->name('contact');
 Route::get('/privacy', [UserController::class, 'privacy'])->name('privacy');
 Route::get('/terms', [UserController::class, 'terms'])->name('terms');
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -42,6 +42,11 @@ Route::middleware('auth')->group(function () {
         Route::post('store', 'store')->name('address.store');
         Route::patch('update/{id}', 'update')->name('address.update');
         Route::delete('delete/{id}', 'delete')->name('address.delete');
+    });
+
+    //Order History
+    Route::prefix('order')->controller(OrderController::class)->group(function () {
+        Route::get('/', 'index')->name('order.index');
     });
 
     //checkout
@@ -65,7 +70,7 @@ Route::prefix('cart')->controller(CartController::class)->group(function () {
 ///routes for product list and filter
 Route::prefix('products')->controller(ProductListController::class)->group(function () {
     Route::get('/', 'index')->name('products.index');
-    // Route::get('/{product}', 'show')->name('products.show');
+    Route::get('/{product}', 'show')->name('products.show');
     // Route::get('/category/{category}', 'category')->name('products.category');
     // Route::get('/brand/{brand}', 'brand')->name('products.brand');
 });

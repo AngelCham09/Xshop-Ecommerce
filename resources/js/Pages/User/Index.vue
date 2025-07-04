@@ -24,12 +24,30 @@
 
 <script setup>
 import UserLayouts from "./Layouts/UserLayout.vue";
-import { Link, router } from "@inertiajs/vue3";
+import { usePage } from "@inertiajs/vue3";
 import Hero from "./Layouts/Hero.vue";
 import ProductList from "./Components/ProductList.vue";
+import { onMounted } from "vue";
+
+const page = usePage();
 defineProps({
     products: Array,
 });
 
+
+onMounted(() => {
+  if (page.props.flash.info) {
+    Swal.fire({
+      toast: true,
+      icon: 'info',
+      title: page.props.flash.info,
+      position: 'bottom-end',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+    });
+  }
+
+});
 
 </script>

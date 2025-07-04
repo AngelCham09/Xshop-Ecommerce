@@ -115,13 +115,6 @@
                         </li>
                         <li>
                             <Link
-                                :href="route('dashboard')"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                                >Dashboard</Link
-                            >
-                        </li>
-                        <li>
-                            <Link
                                 :href="route('logout')"
                                 method="post"
                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
@@ -194,20 +187,7 @@
                                     currentRoute !== 'products.index',
                             }"
                             class="block py-2 px-3 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-purple-700 md:p-0 dark:text-white md:dark:hover:text-purple-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-                            >Women</Link
-                        >
-                    </li>
-                    <li>
-                        <Link
-                            :href="route('products.index')"
-                            :class="{
-                                'text-purple-700':
-                                    currentRoute === 'products.index',
-                                'text-gray-900':
-                                    currentRoute !== 'products.index',
-                            }"
-                            class="block py-2 px-3 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-purple-700 md:p-0 dark:text-white md:dark:hover:text-purple-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-                            >Men</Link
+                            >Product</Link
                         >
                     </li>
                     <li>
