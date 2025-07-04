@@ -113,7 +113,7 @@ import {
 
 const auth = usePage().props.auth;
 const navigationItems = [
-    { name: 'My orders', href: '/orders', icon: ShoppingCartIcon },
+    { name: 'My orders', href: '/order', icon: ShoppingCartIcon },
     { name: 'Reviews', href: '/reviews', icon: StarIcon },
     { name: 'Delivery addresses', href: '/address', icon: HomeIcon },
     { name: 'Recently viewed', href: '/recently-viewed', icon: EyeIcon },

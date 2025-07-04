@@ -30,18 +30,25 @@
                                 class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                             >
                                 <td class="p-4">
-                                    <img
-                                        v-if="product.product_images.length > 0"
-                                        :src="`/storage/${product.product_images[0].image}`"
-                                        class="w-16 md:w-32 max-w-full max-h-full"
-                                        alt="Apple Watch"
-                                    />
-                                    <img
-                                        v-else
-                                        src="https://media.istockphoto.com/id/1409329028/vector/no-picture-available-placeholder-thumbnail-icon-illustration-design.jpg?s=612x612&w=0&k=20&c=_zOuJu755g2eEUioiOUdz_mHKJQJn-tDgIAhQzyeKUQ="
-                                        class="w-16 md:w-32 max-w-full max-h-full"
-                                        alt="Apple Watch"
-                                    />
+                                    <div
+                                        class="w-24 h-24 md:w-32 md:h-32 bg-white border rounded overflow-hidden"
+                                    >
+                                        <img
+                                            v-if="
+                                                product.product_images.length >
+                                                0
+                                            "
+                                            :src="`/storage/${product.product_images[0].image}`"
+                                            class="w-full h-full object-cover"
+                                            alt="Product Image"
+                                        />
+                                        <img
+                                            v-else
+                                            src="https://media.istockphoto.com/id/1409329028/vector/no-picture-available-placeholder-thumbnail-icon-illustration-design.jpg?s=612x612&w=0&k=20&c=_zOuJu755g2eEUioiOUdz_mHKJQJn-tDgIAhQzyeKUQ="
+                                            class="w-full h-full object-cover"
+                                            alt="No Image"
+                                        />
+                                    </div>
                                 </td>
                                 <td
                                     class="px-6 py-4 font-semibold text-gray-900 dark:text-white"
@@ -142,7 +149,7 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <a
-                                        @click="remove(product)"
+                                        @click="remove(product.id)"
                                         class="cursor-pointer font-medium text-red-600 dark:text-red-500"
                                         >Remove</a
                                     >
@@ -155,7 +162,7 @@
                 <div
                     class="mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full"
                 >
-                    <OrderSummary/>
+                    <OrderSummary />
                     <!-- <div
                         class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6"
                     >
@@ -445,8 +452,9 @@ const update = (product, quantity) => {
     });
 };
 
-const remove = (product) => {
-    router.delete(route("cart.delete", product));
+const remove = (productId) => {
+    router.delete(`/cart/delete/${productId}`, {
+        preserveScroll: true,
+    });
 };
-
 </script>

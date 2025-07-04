@@ -26,4 +26,13 @@ class ProductListController extends Controller
             'brands' => $brands,
         ]);
     }
+
+    public function show(Product $product)
+    {
+        $product->load(['category', 'brand', 'product_images']);
+
+        return Inertia::render('User/ProductDetail', [
+            'product' => new ProductResource($product),
+        ]);
+    }
 }

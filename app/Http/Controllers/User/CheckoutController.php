@@ -95,7 +95,7 @@ class CheckoutController extends Controller
             ],
             'quantity' => 1,
         ];
-        
+
         $checkout_session = $stripe->checkout->sessions->create([
             'line_items' => $lineItems,
             'mode' => 'payment',
@@ -174,10 +174,15 @@ class CheckoutController extends Controller
                 ]);
             }
 
-            return redirect()->route('dashboard');
+            return redirect()->route('home');
 
         }catch(\Exception $e){
             throw new NotFoundHttpException();
         }
+    }
+    public function cancel(Request $request)
+    {
+
+        return redirect()->route('home')->with('info', 'Payment was cancelled. You can try again.');
     }
 }

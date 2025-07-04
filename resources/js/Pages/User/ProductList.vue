@@ -499,7 +499,7 @@ function updateFilterProducts() {
                                         <div class="space-y-4">
                                             <div
                                                 v-for="brand in brands"
-                                                :key="brand.value"
+                                                :key="`brand-${brand.value}`"
                                                 class="flex gap-3"
                                             >
                                                 <div
@@ -509,7 +509,7 @@ function updateFilterProducts() {
                                                         class="group grid size-4 grid-cols-1"
                                                     >
                                                         <input
-                                                            :id="`filter-${brand.id}`"
+                                                            :id="`brand-filter-${brand.id}`"
                                                             :value="brand.id"
                                                             v-model="selectedBrands"
                                                             type="checkbox"
@@ -521,7 +521,7 @@ function updateFilterProducts() {
                                                             fill="none"
                                                         >
                                                             <path
-                                                                class="opacity-0 group-has-checked:opacity-100"
+                                                                class="opacity-1 group-has-checked:opacity-100"
                                                                 d="M3 8L6 11L11 3.5"
                                                                 stroke-width="2"
                                                                 stroke-linecap="round"
@@ -538,7 +538,7 @@ function updateFilterProducts() {
                                                     </div>
                                                 </div>
                                                 <label
-                                                    :for="`filter-${brand.id}`"
+                                                    :for="`brand-filter-${brand.id}`"
                                                     class="text-sm text-gray-600"
                                                     >{{ brand.name }}</label
                                                 >
@@ -581,7 +581,7 @@ function updateFilterProducts() {
                                         <div class="space-y-4">
                                             <div
                                                 v-for="category in categories"
-                                                :key="category.value"
+                                                :key="`category-${category.value}`"
                                                 class="flex gap-3"
                                             >
                                                 <div
@@ -591,7 +591,7 @@ function updateFilterProducts() {
                                                         class="group grid size-4 grid-cols-1"
                                                     >
                                                         <input
-                                                            :id="`filter-${category.id}`"
+                                                            :id="`category-filter-${category.id}`"
                                                             :value="category.id"
                                                             v-model="selectedCategories"
                                                             type="checkbox"
@@ -603,7 +603,7 @@ function updateFilterProducts() {
                                                             fill="none"
                                                         >
                                                             <path
-                                                                class="opacity-0 group-has-checked:opacity-100"
+                                                                class="opacity-1 group-has-checked:opacity-100"
                                                                 d="M3 8L6 11L11 3.5"
                                                                 stroke-width="2"
                                                                 stroke-linecap="round"
@@ -620,7 +620,7 @@ function updateFilterProducts() {
                                                     </div>
                                                 </div>
                                                 <label
-                                                    :for="`filter-${category.id}`"
+                                                    :for="`category-filter-${category.id}`"
                                                     class="text-sm text-gray-600"
                                                     >{{ category.name }}</label
                                                 >

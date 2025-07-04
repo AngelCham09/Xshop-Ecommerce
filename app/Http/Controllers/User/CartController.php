@@ -121,7 +121,7 @@ class CartController extends Controller
                 'product_id' => $product->id
             ])->first()?->delete();
 
-            if (CartItem::count() <= 0) {
+            if (CartItem::where('user_id', $user->id)->count() <= 0) {
                 return redirect()->route('home')->with('info', 'Your cart is empty');
             } else {
                 return redirect()->back()->with('sucess', 'Item removed successfully');

@@ -8,18 +8,10 @@ defineProps({
     }
 });
 
-const addToCart = (product) => {
-    router.post(route("cart.store", product), {
-        onSuccess: (page) => {
-            Swal.fire({
-                toast: true,
-                icon: "success",
-                position: "top-end",
-                showConfirmButton: false,
-                title: page.props.flash.success,
-            });
-            productModal.value = false;
-        },
+const addToCart = (productId) => {
+    router.post(`/cart/store/${productId}`, {}, {
+        preserveScroll: true,
+        preserveState: true,
     });
 };
 </script>
@@ -34,7 +26,7 @@ const addToCart = (product) => {
             class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
         >
             <div class="h-56 w-full">
-                <a href="#">
+                <a :href="`/products/${product.id}`">
                     <img
                         v-if="product.product_images.length > 0"
                         :src="'/storage/' + product.product_images[0].image"
@@ -271,7 +263,7 @@ const addToCart = (product) => {
                     </p>
 
                     <button
-                        @click="addToCart(product)"
+                        @click="addToCart(product.id)"
                         type="button"
                         class="inline-flex items-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium btn-primary"
                     >
