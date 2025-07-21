@@ -1,0 +1,31 @@
+FROM php:8.2-fpm
+
+# Create a user to run the application ( dont want root to run it )
+ARG user
+ARG uid
+
+# Install system packages for PHP extensions
+RUN apt-get update && apt-get install -y \
+    libpng-dev libjpeg-dev libfreetype6-dev zip git unzip curl
+
+# Install PHP extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd pdo pdo_mysql
+
+WORKDIR /var/www
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Copy *everything* (Laravel files)
+COPY . .
+
+RUN composer install
+
+# Link storage
+RUN php artisan storage:link
+
+# Expose ports
+EXPOSE 8000
+
+CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=8000"]
