@@ -24,7 +24,7 @@ const totalPrice = computed(() => {
 const countries = ref([]);
 const fetchCountries = async () => {
     try {
-        const response = await fetch("https://restcountries.com/v3.1/all");
+        const response = await fetch("https://restcountries.com/v3.1/all?fields=name,cca2");
         const data = await response.json();
         countries.value = data
             .map((country) => ({
