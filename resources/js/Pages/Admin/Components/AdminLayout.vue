@@ -1,6 +1,5 @@
 <template>
     <div class="antialiased bg-gray-50 dark:bg-gray-900">
-        <Toaster />
         <!--narbar start-->
         <Navbar />
 
@@ -20,7 +19,6 @@ import { onMounted } from "vue";
 import { initFlowbite } from "flowbite";
 import Navbar from "./Navbar.vue";
 import Sidebar from "./Sidebar.vue";
-import Toaster from '@/components/ui/toast/Toaster.vue'
 
 // initialize components based on data attribute selectors
 onMounted(() => {
