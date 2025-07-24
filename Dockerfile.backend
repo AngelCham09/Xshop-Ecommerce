@@ -17,15 +17,6 @@ WORKDIR /var/www
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy *everything* (Laravel files)
-COPY . .
-
-RUN composer install
-
-# Link storage
-RUN php artisan storage:link
-
 # Expose ports
 EXPOSE 8000
 
-CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=8000"]
