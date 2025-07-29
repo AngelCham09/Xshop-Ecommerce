@@ -1,39 +1,48 @@
 # ----------------------------------------
-# 1️⃣ Build the frontend assets (Node)
+# 1️⃣ Composer stage — install PHP deps
 # ----------------------------------------
-FROM node:20-alpine AS node_builder
+FROM composer:2 AS composer_build
 
 WORKDIR /app
 
-# Copy only the files needed to install dependencies
+# Copy only composer files first for layer caching
+COPY composer.json composer.lock ./
+
+# Install PHP dependencies without dev tools
+RUN composer install --no-dev --optimize-autoloader
+
+# Copy the rest of your Laravel project
+COPY . .
+
+# Generate Ziggy routes (optional: publish assets)
+# If you use Ziggy's Vite plugin, this may not be needed.
+# But if you rely on the vendor file, ensure it's here.
+
+# ----------------------------------------
+# 2️⃣ Node stage — build frontend assets
+# ----------------------------------------
+FROM node:20-alpine AS node_build
+
+WORKDIR /app
+
+# Copy only Node/Vite related files
 COPY package*.json ./
 COPY vite.config.js ./
-COPY resources/ ./resources/
 COPY tailwind.config.js ./
+COPY resources/ ./resources/
 
-# Install and build frontend assets
+# ✅ Copy Ziggy's vendor files from Composer stage
+COPY --from=composer_build /app/vendor ./vendor
+
+# Install Node dependencies & build Vite assets
 RUN npm ci && npm run build
 
 # ----------------------------------------
-# 2️⃣ Build PHP app (Composer, Laravel)
-# ----------------------------------------
-FROM composer:2 AS php_builder
-
-WORKDIR /app
-
-# Copy composer files & install dependencies
-COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader
-
-# Copy the rest of the app source
-COPY . .
-
-# ----------------------------------------
-# 3️⃣ Final image (Nginx + PHP-FPM)
+# 3️⃣ Final image — PHP-FPM + NGINX + Supervisor
 # ----------------------------------------
 FROM php:8.3-fpm-alpine
 
-# Install system dependencies
+# Install OS packages
 RUN apk add --no-cache \
     nginx \
     bash \
@@ -51,27 +60,29 @@ RUN apk add --no-cache \
 # Install PHP extensions
 RUN docker-php-ext-install pdo pdo_mysql mbstring zip intl opcache bcmath gd
 
-# Copy Laravel app from builder
+# Set working directory
 WORKDIR /var/www/html
-COPY --from=php_builder /app ./
 
-# Copy built frontend assets
-COPY --from=node_builder /app/public ./public
+# Copy built backend & vendor files
+COPY --from=composer_build /app ./
 
-# Add default nginx config
+# Copy built frontend assets (Vite output)
+COPY --from=node_build /app/public ./public
+
+# Add nginx config
 COPY ./docker/nginx.conf /etc/nginx/nginx.conf
 
-# Fix permissions
+# Add supervisor config
+COPY ./docker/supervisord.conf /etc/supervisord.conf
+
+# Fix permissions for Laravel
 RUN addgroup -g 1000 www && \
     adduser -G www -u 1000 -D www && \
     chown -R www:www /var/www/html && \
     chmod -R 755 /var/www/html/storage
 
-# Copy supervisord config
-COPY ./docker/supervisord.conf /etc/supervisord.conf
-
-# Expose HTTP
+# Expose HTTP port
 EXPOSE 80
 
-# Start all services (nginx + php-fpm)
+# Run NGINX + PHP-FPM with Supervisor
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
