@@ -1,54 +1,77 @@
-# PHP + FPM base
-FROM php:8.2-fpm
+# ----------------------------------------
+# 1️⃣ Build the frontend assets (Node)
+# ----------------------------------------
+FROM node:20-alpine AS node_builder
 
-# Install system packages
-RUN apt-get update && apt-get install -y \
-    nginx supervisor libpng-dev libjpeg-dev libfreetype6-dev \
-    zip git unzip curl libonig-dev libxml2-dev libzip-dev npm nodejs
+WORKDIR /app
 
-# PHP extensions
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
-    docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+# Copy only the files needed to install dependencies
+COPY package*.json ./
+COPY vite.config.js ./
+COPY resources/ ./resources/
+COPY tailwind.config.js ./
 
-# Configure PHP-FPM
-RUN mkdir -p /run/php && \
-    chown www-data:www-data /run/php && \
-    echo "listen = 9000" >> /usr/local/etc/php-fpm.d/zz-docker.conf && \
-    echo "clear_env = no" >> /usr/local/etc/php-fpm.d/www.conf && \
-    echo "pm.max_children = 5" >> /usr/local/etc/php-fpm.d/www.conf && \
-    echo "pm.start_servers = 2" >> /usr/local/etc/php-fpm.d/www.conf
+# Install and build frontend assets
+RUN npm ci && npm run build
 
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# ----------------------------------------
+# 2️⃣ Build PHP app (Composer, Laravel)
+# ----------------------------------------
+FROM composer:2 AS php_builder
 
-# Working dir
-WORKDIR /var/www
+WORKDIR /app
 
-# Copy app
-COPY . .
-
-# Install PHP deps
+# Copy composer files & install dependencies
+COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader
 
-# Build frontend
-RUN npm install && npm run build
+# Copy the rest of the app source
+COPY . .
 
-# NGINX config
-RUN rm /etc/nginx/sites-enabled/default
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# ----------------------------------------
+# 3️⃣ Final image (Nginx + PHP-FPM)
+# ----------------------------------------
+FROM php:8.3-fpm-alpine
 
-# Supervisor config
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+# Install system dependencies
+RUN apk add --no-cache \
+    nginx \
+    bash \
+    curl \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    libwebp-dev \
+    libzip-dev \
+    oniguruma-dev \
+    icu-dev \
+    shadow \
+    su-exec \
+    supervisor
 
-# Permissions
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache && \
-    chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+# Install PHP extensions
+RUN docker-php-ext-install pdo pdo_mysql mbstring zip intl opcache bcmath gd
 
-# Production optimizations
-RUN php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
+# Copy Laravel app from builder
+WORKDIR /var/www/html
+COPY --from=php_builder /app ./
 
+# Copy built frontend assets
+COPY --from=node_builder /app/public ./public
+
+# Add default nginx config
+COPY ./docker/nginx.conf /etc/nginx/nginx.conf
+
+# Fix permissions
+RUN addgroup -g 1000 www && \
+    adduser -G www -u 1000 -D www && \
+    chown -R www:www /var/www/html && \
+    chmod -R 755 /var/www/html/storage
+
+# Copy supervisord config
+COPY ./docker/supervisord.conf /etc/supervisord.conf
+
+# Expose HTTP
 EXPOSE 80
 
-CMD ["/usr/bin/supervisord", "-n"]
+# Start all services (nginx + php-fpm)
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
